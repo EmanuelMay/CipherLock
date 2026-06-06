@@ -1,0 +1,6 @@
+@CipherLock_HostAddress = http://localhost:5294
+
+GET {{CipherLock_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
