@@ -4,16 +4,18 @@ public class Credential
 {
     private Credential() { }
 
-    public Credential(string title, string passwordHash, int vaultId)
+    public Credential(string title, string username, int vaultId, string encryptedPassword, string iv)
     {
         Title = title;
-        PasswordHash = passwordHash;
+        Username = username;
         VaultId = vaultId;
+        EncryptedPassword = encryptedPassword;
+        IV = iv;
     }
 
     public int Id { get; private set; }
     public string Title { get; private set; } = null!;
-    public string PasswordHash { get; private set; } = null!;
+    public string Username { get; private set;} = null!;
     public string EncryptedPassword { get; private set; } = null!;
     public string IV { get; private set; } = null!;
     public int VaultId { get; private set; }

@@ -1,0 +1,39 @@
+using System.ComponentModel.DataAnnotations;
+using CipherLock.Domain.Enums;
+
+namespace CipherLock.Application.DTO;
+
+public class UserResponseDTO
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public string Role { get; set; } = null!;
+}
+
+public class CreateUserDTO
+{
+    [Required]
+    [StringLength(150)]
+    public string Name { get; set; } = null!;
+
+    [Required]
+    [StringLength(255)]
+    [EmailAddress]
+    public string Email { get; set; } = null!;
+
+    [Required]
+    [MinLength(8)]
+    public string Password { get; set; } = null!;
+}
+
+public class LoginDTO
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = null!;
+
+    [Required]
+    [MinLength(8)]
+    public string Password { get; set; } = null!;
+}

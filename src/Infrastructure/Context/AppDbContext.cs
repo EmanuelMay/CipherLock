@@ -15,6 +15,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .ToTable("users");
 
         mb.Entity<User>()
+            .HasQueryFilter(x => !x.IsDeleted);
+
+        mb.Entity<User>()
             .HasIndex(x => x.Email)
             .IsUnique();
     
