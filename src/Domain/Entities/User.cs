@@ -46,6 +46,11 @@ public class User
             Email = email;
     }
 
+    public void UpdatePassword(string passwordHash)
+    {
+        PasswordHash = passwordHash;
+    }
+
     private void UpdateValidation(string? name, string? email)
     {
         if (!string.IsNullOrWhiteSpace(name))

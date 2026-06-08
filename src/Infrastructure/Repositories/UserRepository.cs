@@ -23,4 +23,10 @@ public class UserRepository(
 
     public async Task<bool> EmailExists(string? email)
         => await context.Users.AnyAsync(x => x.Email == email);
+
+    public async Task AddUserResetPassword(UserResetPassword resetPassword)
+        => await context.UserResetPasswords.AddAsync(resetPassword);
+
+    public async Task<UserResetPassword?> GetUserResetPassword(int id, string code)
+        => await context.UserResetPasswords.FirstOrDefaultAsync(x => x.Code == code && x.CreatedAt < x.ExpiresIn && x.UserId == id && !x.IsUsed);
 }

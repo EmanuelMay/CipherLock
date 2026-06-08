@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users { get; private set; }
     public DbSet<Vault> Vaults { get; private set; }
     public DbSet<Credential> Credentials { get; private set; }
+    public DbSet<UserResetPassword> UserResetPasswords { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
@@ -54,5 +55,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         mb.Entity<Credential>()
             .Property(x => x.IV)
             .HasColumnType("varchar(150)");
+        
+        mb.Entity<UserResetPassword>()
+            .ToTable("user_reset_passwords");
     }
 }

@@ -13,4 +13,8 @@ public interface IUserRepository
     public Task<User?> GetByEmail(string email);
     
     public Task<bool> EmailExists(string? email);
+
+    public Task AddUserResetPassword(UserResetPassword resetPassword);
+
+    public Task<UserResetPassword?> GetUserResetPassword(int id, string code);
 }

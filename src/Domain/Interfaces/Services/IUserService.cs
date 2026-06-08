@@ -11,4 +11,8 @@ public interface IUserService
     public Task Delete(int id);
 
     public Task<ResponseUserDTO> Update(int id, UpdateUserDTO dto);
+
+    public Task ForgotPassword(ForgotPasswordDTO dto);
+
+    public Task ResetPassword(ResetPasswordDTO dto);
 }

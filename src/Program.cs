@@ -1,5 +1,6 @@
 using System.Text;
 using CipherLock.Application.Services;
+using CipherLock.Domain.Entities;
 using CipherLock.Domain.Interfaces;
 using CipherLock.Infrastructure.Context;
 using CipherLock.Infrastructure.Repositories;
@@ -18,6 +19,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IVaultService, VaultService>();
+builder.Services.AddScoped<IVaultRepository, VaultRepository>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -46,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var privateKey = "12sdfg'kondf;gljknds;konlfg;onkdsfgon;kdfsgn;odfgondfsong3"
+var jwtKey = builder.Configuration["Jwt:PrivateKey"]
     ?? throw new Exception("JWT:PrivateKey not configured");
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,7 +60,7 @@ builder.Services
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(privateKey)),
+                Encoding.UTF8.GetBytes(jwtKey)),
             ValidateIssuer   = false,
             ValidateAudience = false,
             ValidateLifetime = true,
@@ -64,7 +68,7 @@ builder.Services
         };
     });
 
-string? mySqlConnection = builder.Configuration.GetConnectionString("Default");
+string? mySqlConnection = builder.Configuration["ConnectionStrings:DefaultConnection"];
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         mySqlConnection,

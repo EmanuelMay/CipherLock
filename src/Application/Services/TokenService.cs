@@ -7,11 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CipherLock.Application.Services;
 
-public class TokenService : ITokenService
+public class TokenService(
+    IConfiguration configuration
+) : ITokenService
 {
     public string Generate(User user)
     {
-        var privateKey = "12sdfg'kondf;gljknds;konlfg;onkdsfgon;kdfsgn;odfgondfsong3";
+        var privateKey = configuration["Jwt:PrivateKey"]
+            ?? throw new Exception();
 
         var handler = new JwtSecurityTokenHandler();
 

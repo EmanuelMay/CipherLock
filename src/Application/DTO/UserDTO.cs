@@ -43,3 +43,23 @@ public class UpdateUserDTO
     public string? Name { get; set; }
     public string? Email { get; set; }
 }
+
+public class ForgotPasswordDTO
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = null!;
+}
+
+public class ResetPasswordDTO
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = null!;
+
+    [Required] 
+    public string Code { get; set; } = null!;
+
+    [Required]
+    public string Password { get; set; } = null!;
+}

@@ -46,4 +46,20 @@ public class UserController(
 
         return Ok(await userService.Update(int.Parse(id!), dto));
     }
+
+    [HttpPost("forgot-password")]
+    public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+    {
+        await userService.ForgotPassword(dto);
+
+        return Ok();
+    }
+
+    [HttpPatch("reset-password")]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+    {
+        await userService.ResetPassword(dto);
+
+        return Ok();
+    }
 }
