@@ -3,7 +3,7 @@ using CipherLock.Domain.Enums;
 
 namespace CipherLock.Application.DTO;
 
-public class UserResponseDTO
+public class ResponseUserDTO
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
@@ -36,4 +36,10 @@ public class LoginDTO
     [Required]
     [MinLength(8)]
     public string Password { get; set; } = null!;
+}
+
+public class UpdateUserDTO
+{
+    public string? Name { get; set; }
+    public string? Email { get; set; }
 }

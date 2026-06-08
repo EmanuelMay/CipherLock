@@ -2,15 +2,16 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CipherLock.Application.Services;
 
-public class TokenService
+public class TokenService : ITokenService
 {
     public string Generate(User user)
     {
-        var privateKey = "123";
+        var privateKey = "12sdfg'kondf;gljknds;konlfg;onkdsfgon;kdfsgn;odfgondfsong3";
 
         var handler = new JwtSecurityTokenHandler();
 
@@ -36,7 +37,10 @@ public class TokenService
     {
         var ci = new ClaimsIdentity();
         ci.AddClaim(
-            new Claim(ClaimTypes.Name, user.Email)
+            new Claim(ClaimTypes.Name, user.Id.ToString())
+        );
+        ci.AddClaim(
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         );
 
         return ci;

@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using CipherLock.Application.DTO;
-using CipherLock.Application.Services;
+using CipherLock.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CipherLock.Presentation.Controllers;
@@ -7,25 +9,41 @@ namespace CipherLock.Presentation.Controllers;
 [ApiController]
 [Route("users")]
 public class UserController(
-    UserService userService
+    IUserService userService
 ) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<UserResponseDTO>> Add([FromBody] CreateUserDTO dto)
+    public async Task<ActionResult<ResponseUserDTO>> Add([FromBody] CreateUserDTO dto)
     {
         var result = await userService.Add(dto);
         return CreatedAtAction(nameof(GetById), new { id = result.Id}, result);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<UserResponseDTO>> GetById(int id)
-        => Ok(await userService.GetById(id));
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<ResponseUserDTO>> GetById()
+    {
+        var id = User.FindFirst(ClaimTypes.Name)?.Value;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetAll()
-        => Ok(await userService.GetAll());
+        return Ok(await userService.GetById(int.Parse(id!)));
+    }
     
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete(int id)
-        => NoContent();
+    [Authorize]
+    [HttpDelete("me")]
+    public async Task<ActionResult> Delete()
+    {
+        var id = User.FindFirst(ClaimTypes.Name)?.Value;
+
+        await userService.Delete(int.Parse(id!));
+        return NoContent();
+    }
+    
+    [Authorize]
+    [HttpPatch("me")]
+    public async Task<ActionResult<ResponseUserDTO>> Update([FromBody] UpdateUserDTO dto)
+    {
+        var id = User.FindFirst(ClaimTypes.Name)?.Value;
+
+        return Ok(await userService.Update(int.Parse(id!), dto));
+    }
 }

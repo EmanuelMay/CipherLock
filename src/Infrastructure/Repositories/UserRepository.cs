@@ -1,4 +1,5 @@
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Interfaces;
 using CipherLock.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,7 @@ namespace CipherLock.Infrastructure.Repositories;
 
 public class UserRepository(
     AppDbContext context
-)
+) : IUserRepository
 {
     public async Task SaveChanges()
         => await context.SaveChangesAsync();
@@ -20,6 +21,6 @@ public class UserRepository(
     public async Task<User?> GetByEmail(string email)
         => await context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
-    public async Task<IEnumerable<User>> GetAll()
-        => await context.Users.AsNoTracking().ToListAsync();
+    public async Task<bool> EmailExists(string? email)
+        => await context.Users.AnyAsync(x => x.Email == email);
 }

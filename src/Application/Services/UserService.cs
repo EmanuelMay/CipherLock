@@ -1,19 +1,20 @@
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Interfaces;
 using CipherLock.Infrastructure.Repositories;
 
 namespace CipherLock.Application.Services;
 
 public class UserService(
-    UserRepository repository
-)
+    IUserRepository repository
+) : IUserService
 {
-    public async Task<UserResponseDTO> Add(CreateUserDTO dto)
+    public async Task<ResponseUserDTO> Add(CreateUserDTO dto)
     {
         if (dto.Password.Length < 8)
             throw new Exception();
         
-        var user = new User(dto.Name, dto.Email, dto.Password);
+        var user = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
 
         await repository.Add(user);
         await repository.SaveChanges();
@@ -21,18 +22,11 @@ public class UserService(
         return ToDTO(user);
     }
 
-    public async Task<UserResponseDTO> GetById(int id)
+    public async Task<ResponseUserDTO> GetById(int id)
     {
         var user = await GetOrThrow(id);
 
         return ToDTO(user);
-    }
-
-    public async Task<IEnumerable<UserResponseDTO>> GetAll()
-    {
-        var users = await repository.GetAll();
-
-        return users.Select(x => ToDTO(x));
     }
 
     public async Task Delete(int id)
@@ -43,6 +37,18 @@ public class UserService(
         await repository.SaveChanges();
     }
 
+    public async Task<ResponseUserDTO> Update(int id, UpdateUserDTO dto)
+    {
+        if (await repository.EmailExists(dto.Email))
+            throw new Exception();
+
+        var user = await GetOrThrow(id);
+
+        user.Update(dto.Name, dto.Email);
+
+        return ToDTO(user);
+    }
+
     private async Task<User> GetOrThrow(int id)
     {
         var user = await repository.GetById(id)
@@ -50,9 +56,9 @@ public class UserService(
         return user;
     }
 
-    private static UserResponseDTO ToDTO(User user)
+    private static ResponseUserDTO ToDTO(User user)
     {
-        return new UserResponseDTO()
+        return new ResponseUserDTO()
         {
             Id = user.Id,
             Name = user.Name,
