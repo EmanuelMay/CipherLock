@@ -1,9 +1,11 @@
 using System.Text;
 using CipherLock.Application.Services;
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
 using CipherLock.Infrastructure.Context;
 using CipherLock.Infrastructure.Repositories;
+using CipherLock.Presentation.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -54,7 +56,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var jwtKey = builder.Configuration["Jwt:PrivateKey"]
-    ?? throw new Exception("JWT:PrivateKey not configured");
+    ?? throw new JwtKeyException("jwt key is not configured");
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -87,6 +89,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.ConfigureExceptionHandler(app.Environment);
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

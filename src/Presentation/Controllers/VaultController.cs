@@ -20,7 +20,9 @@ public class VaultController(
     {
         var id = User.FindFirst(ClaimTypes.Name)?.Value;
 
-        return Ok(await vaultService.Add(int.Parse(id!), dto));
+        var result = await vaultService.Add(int.Parse(id!), dto);
+
+        return CreatedAtAction(nameof(GetByIdWithCredentials), new { vaultId = result.Id}, result);
     }
 
     [Authorize]

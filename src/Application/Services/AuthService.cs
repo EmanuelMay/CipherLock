@@ -1,7 +1,6 @@
 using CipherLock.Application.DTO;
-using CipherLock.Domain.Entities;
+using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
-using CipherLock.Infrastructure.Repositories;
 
 namespace CipherLock.Application.Services;
 
@@ -13,10 +12,10 @@ public class AuthService(
     public async Task<string> Login(LoginDTO dto)
     {
         var user = await userRepository.GetByEmail(dto.Email)
-            ?? throw new Exception();
+            ?? throw new InvalidCredentialsException("invalid credentials");
         
         if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-            throw new Exception();
+            throw new InvalidCredentialsException("invalid credentials");
 
         return tokenService.Generate(user);
     }

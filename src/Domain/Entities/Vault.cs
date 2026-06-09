@@ -6,6 +6,8 @@ public class Vault
 
     public Vault(string name, int userId)
     {
+        Validation(name);
+
         Name = name;
         CreatedAt = DateTime.UtcNow;
         UserId = userId;
@@ -21,6 +23,8 @@ public class Vault
 
     public void Update(string name)
     {
+        Validation(name);
+
         Name = name;
         ModifiedAt = DateTime.UtcNow;
     }
@@ -28,6 +32,6 @@ public class Vault
     private void Validation(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException();
+            throw new ArgumentException("the name cannot be longer than 150");
     }
 }

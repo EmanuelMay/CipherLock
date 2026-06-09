@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,7 +15,7 @@ public class TokenService(
     public string Generate(User user)
     {
         var privateKey = configuration["Jwt:PrivateKey"]
-            ?? throw new Exception();
+            ?? throw new JwtKeyException("jwt key is not configured");
 
         var handler = new JwtSecurityTokenHandler();
 

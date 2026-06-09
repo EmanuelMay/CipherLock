@@ -56,12 +56,12 @@ public class User
         if (!string.IsNullOrWhiteSpace(name))
         {
             if (name.Length > 150)
-                throw new ArgumentException();
+                throw new ArgumentException("the name cannot be longer than 150");
         }
         if (!string.IsNullOrWhiteSpace(email))
         {
             if (email.Length > 255)
-                throw new ArgumentException();
+                throw new ArgumentException("the email cannot be longer than 255");
             if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                 throw new ArgumentException("invalid email");
         }
@@ -70,15 +70,15 @@ public class User
     private static void Validation(string name, string email, string password)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException();
+            throw new ArgumentException("name cannot be null");
         if (string.IsNullOrWhiteSpace(email))
-            throw new ArgumentException();
+            throw new ArgumentException("email cannot be null");
         if (string.IsNullOrWhiteSpace(password))
-            throw new ArgumentException();
+            throw new ArgumentException("password cannot be null");
         if (name.Length > 150)
-            throw new ArgumentException();
+            throw new ArgumentException("the name cannot be longer than 150");
         if (email.Length > 255)
-            throw new ArgumentException();
+            throw new ArgumentException("the email cannot be longer than 255");
         if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             throw new ArgumentException("invalid email");
     }

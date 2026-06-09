@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
 
 namespace CipherLock.Application.Services;
@@ -46,7 +47,7 @@ public class CredentialService(
     private async Task<Vault> GetOrThrowVault(int userId, int vaultId)
     {
         var vault = await vaultRepository.GetById(userId, vaultId)
-            ?? throw new Exception();
+            ?? throw new CredentialNotFoundException("credential not found");
         return vault;
     }
 }

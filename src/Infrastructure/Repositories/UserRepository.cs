@@ -28,5 +28,5 @@ public class UserRepository(
         => await context.UserResetPasswords.AddAsync(resetPassword);
 
     public async Task<UserResetPassword?> GetUserResetPassword(int id, string code)
-        => await context.UserResetPasswords.FirstOrDefaultAsync(x => x.Code == code && x.CreatedAt < x.ExpiresIn && x.UserId == id && !x.IsUsed);
+        => await context.UserResetPasswords.FirstOrDefaultAsync(x => x.Code == code && x.ExpiresIn > DateTime.UtcNow && x.UserId == id && !x.IsUsed);
 }

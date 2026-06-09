@@ -8,7 +8,7 @@ public class UserResetPassword
     {
         Code = code;
         CreatedAt = DateTime.UtcNow;
-        ExpiresIn = DateTime.UtcNow.AddHours(30);
+        ExpiresIn = DateTime.UtcNow.AddMinutes(30);
         IsUsed = false;
         UserId = userId;
     }

@@ -1,5 +1,6 @@
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
 
 namespace CipherLock.Application.Services;
@@ -48,7 +49,7 @@ public class VaultService(
     private async Task<Vault> GetByIdOrThrow(int userId, int vaultId)
     {
         var vault = await repository.GetById(userId, vaultId)
-            ?? throw new Exception();
+            ?? throw new VaultNotFoundException("vault not found");
         return vault;
     }
 

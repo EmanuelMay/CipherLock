@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
 
 namespace CipherLock.Application.Services;
@@ -13,7 +14,7 @@ public class UserService(
     public async Task<ResponseUserDTO> Add(CreateUserDTO dto)
     {
         if (dto.Password.Length < 8)
-            throw new Exception();
+            throw new InvalidPasswordLengthException("The password cannot be less than 8.");
         
         var user = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
 
@@ -40,9 +41,6 @@ public class UserService(
 
     public async Task<ResponseUserDTO> Update(int id, UpdateUserDTO dto)
     {
-        if (await repository.EmailExists(dto.Email))
-            throw new Exception();
-
         var user = await GetByIdOrThrow(id);
 
         user.Update(dto.Name, dto.Email);
@@ -68,14 +66,17 @@ public class UserService(
     public async Task ResetPassword(ResetPasswordDTO dto)
     {
         if (dto.Password.Length < 8)
-            throw new Exception();
+            throw new InvalidPasswordLengthException("The password cannot be less than 8.");
 
         var user = await GetByEmailOrThrow(dto.Email);
         var resetPassword = await repository.GetUserResetPassword(user.Id, dto.Code)
-            ?? throw new Exception();
+            ?? throw new InvalidCredentialsException("invalid credentials");
 
         if (resetPassword.Code != dto.Code)
-            throw new Exception();
+            throw new InvalidCredentialsException("invalid credentials");
+
+        resetPassword.Use();
+        await repository.SaveChanges();
 
         user.UpdatePassword(BCrypt.Net.BCrypt.HashPassword(dto.Password));
         await repository.SaveChanges();
@@ -84,14 +85,14 @@ public class UserService(
     private async Task<User> GetByEmailOrThrow(string email)
     {
         var user = await repository.GetByEmail(email)
-            ?? throw new Exception();
+            ?? throw new UserNotFoundException("user not found");
         return user;
     }
 
     private async Task<User> GetByIdOrThrow(int id)
     {
         var user = await repository.GetById(id)
-            ?? throw new Exception();
+            ?? throw new UserNotFoundException("user not found");
         return user;
     }
 

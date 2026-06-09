@@ -1,4 +1,5 @@
 using CipherLock.Domain.Entities;
+using CipherLock.Domain.Exceptions;
 using MailKit.Net.Smtp;
 using MimeKit;
 
@@ -18,9 +19,9 @@ public class EmailService(
         );
 
         var address = configuration["Email:Address"]
-            ?? throw new Exception();
+            ?? throw new EmailNotConfiguredException("address is not configured");
         var password = configuration["Email:Password"]
-            ?? throw new Exception();
+            ?? throw new EmailNotConfiguredException("password is not configured");
 
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress("CipherLock", address));
