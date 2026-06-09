@@ -4,7 +4,13 @@ public class Credential
 {
     private Credential() { }
 
-    public Credential(string title, string username, int vaultId, string encryptedPassword, string iv)
+    public Credential(
+        string title,
+        string username,
+        int vaultId,
+        string encryptedPassword,
+        string iv
+    )
     {
         Title = title;
         Username = username;

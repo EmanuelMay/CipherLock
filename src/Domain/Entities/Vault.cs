@@ -18,4 +18,16 @@ public class Vault
     public int UserId { get; private set; }
     public User User { get; private set; } = null!;
     public ICollection<Credential> Credentials { get; private set; } = [];
+
+    public void Update(string name)
+    {
+        Name = name;
+        ModifiedAt = DateTime.UtcNow;
+    }
+
+    private void Validation(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException();
+    }
 }
