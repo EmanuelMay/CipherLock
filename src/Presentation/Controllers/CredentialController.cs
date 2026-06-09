@@ -14,9 +14,9 @@ public class CredentialController(
 {
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<ResponseCredentialDTO>> Add([FromBody] CreateCredentialDTO dto)
+    public async Task<ActionResult<ResponseCredentialDTO>> AddAsync([FromBody] CreateCredentialDTO dto)
     {
         var userId = User.FindFirst(ClaimTypes.Name)?.Value;
-        return Ok(await credentialService.Add(int.Parse(userId!), dto));
+        return Ok(await credentialService.AddAsync(int.Parse(userId!), dto));
     }
 }

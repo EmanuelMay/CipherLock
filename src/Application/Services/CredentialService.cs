@@ -11,9 +11,9 @@ public class CredentialService(
     IVaultRepository vaultRepository
 ) : ICredentialService
 {
-    public async Task<ResponseCredentialDTO> Add(int userId, CreateCredentialDTO dto)
+    public async Task<ResponseCredentialDTO> AddAsync(int userId, CreateCredentialDTO dto)
     {
-        await GetOrThrowVault(userId, dto.VaultId);
+        await GetOrThrowVaultAsync(userId, dto.VaultId);
 
         var iv = RandomNumberGenerator.GetBytes(16);
         var iv64 = Convert.ToBase64String(iv);
@@ -26,8 +26,8 @@ public class CredentialService(
             iv64
         );
 
-        await credentialRepository.Add(credential);
-        await credentialRepository.SaveChanges();
+        await credentialRepository.AddAsync(credential);
+        await credentialRepository.SaveChangesAsync();
 
         return ToDTO(credential);
     }
@@ -44,9 +44,9 @@ public class CredentialService(
         };
     }
 
-    private async Task<Vault> GetOrThrowVault(int userId, int vaultId)
+    private async Task<Vault> GetOrThrowVaultAsync(int userId, int vaultId)
     {
-        var vault = await vaultRepository.GetById(userId, vaultId)
+        var vault = await vaultRepository.GetByIdAsync(userId, vaultId)
             ?? throw new CredentialNotFoundException("credential not found");
         return vault;
     }

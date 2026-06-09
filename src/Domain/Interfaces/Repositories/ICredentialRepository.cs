@@ -4,7 +4,7 @@ namespace CipherLock.Domain.Interfaces;
 
 public interface ICredentialRepository
 {
-    public Task SaveChanges();
+    public Task SaveChangesAsync();
 
-    public Task Add(Credential credential);
+    public Task AddAsync(Credential credential);
 }

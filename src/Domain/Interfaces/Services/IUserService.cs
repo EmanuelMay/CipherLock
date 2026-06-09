@@ -4,15 +4,15 @@ namespace CipherLock.Domain.Interfaces;
 
 public interface IUserService
 {
-    public Task<ResponseUserDTO> Add(CreateUserDTO dto);
+    public Task<ResponseUserDTO> AddAsync(CreateUserDTO dto);
 
-    public Task<ResponseUserDTO> GetById(int id);
+    public Task<ResponseUserDTO> GetByIdAsync(int id);
 
-    public Task Delete(int id);
+    public Task DeleteAsync(int id);
 
-    public Task<ResponseUserDTO> Update(int id, UpdateUserDTO dto);
+    public Task<ResponseUserDTO> UpdateAsync(int id, UpdateUserDTO dto);
 
-    public Task ForgotPassword(ForgotPasswordDTO dto);
+    public Task ForgotPasswordAsync(ForgotPasswordDTO dto);
 
-    public Task ResetPassword(ResetPasswordDTO dto);
+    public Task ResetPasswordAsync(ResetPasswordDTO dto);
 }

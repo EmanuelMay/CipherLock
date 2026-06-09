@@ -10,7 +10,7 @@ public class EmailService(
     IWebHostEnvironment environment
 ) : IEmailService
 {
-    public async Task ResetPasswordEmail(string email, string name, string code)
+    public async Task ResetPasswordEmailAsync(string email, string name, string code)
     {
         var path = Path.Combine(
             environment.ContentRootPath,

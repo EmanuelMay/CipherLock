@@ -4,17 +4,17 @@ namespace CipherLock.Domain.Interfaces;
 
 public interface IUserRepository
 {
-    public Task SaveChanges();
+    public Task SaveChangesAsync();
     
-    public Task Add(User user);
+    public Task AddAsync(User user);
     
-    public Task<User?> GetById(int id);
+    public Task<User?> GetByIdAsync(int id);
     
-    public Task<User?> GetByEmail(string email);
+    public Task<User?> GetByEmailAsync(string email);
     
-    public Task<bool> EmailExists(string? email);
+    public Task<bool> EmailExistsAsync(string? email);
 
-    public Task AddUserResetPassword(UserResetPassword resetPassword);
+    public Task AddUserResetPasswordAsync(UserResetPassword resetPassword);
 
-    public Task<UserResetPassword?> GetUserResetPassword(int id, string code);
+    public Task<UserResetPassword?> GetUserResetPasswordAsync(int id, string code);
 }

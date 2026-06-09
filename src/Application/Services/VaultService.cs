@@ -9,46 +9,46 @@ public class VaultService(
     IVaultRepository repository
 ) : IVaultService
 {
-    public async Task<ResponseVaultDTO> Add(int id, CreateVaultDTO dto)
+    public async Task<ResponseVaultDTO> AddAsync(int id, CreateVaultDTO dto)
     {
         var vault = new Vault(dto.Name, id);
 
-        await repository.Add(vault);
-        await repository.SaveChanges();
+        await repository.AddAsync(vault);
+        await repository.SaveChangesAsync();
 
         return ToResponseDTO(vault);
     }
 
-    public async Task<IEnumerable<ResponseVaultDTO>> SearchByName(
+    public async Task<IEnumerable<ResponseVaultDTO>> SearchByNameAsync(
         int userId,
         string name
     )
     {
-        var vaults = await repository.SearchByName(userId, name);
+        var vaults = await repository.SearchByNameAsync(userId, name);
 
         return vaults.Select(x => ToResponseDTO(x));
     }
 
-    public async Task<ResponseVaultDTO> Update(int userId, int vaultId, UpdateVaultDTO dto)
+    public async Task<ResponseVaultDTO> UpdateAsync(int userId, int vaultId, UpdateVaultDTO dto)
     {
-        var vault = await GetByIdOrThrow(userId, vaultId);
+        var vault = await GetByIdOrThrowAsync(userId, vaultId);
 
         vault.Update(dto.Name);
-        await repository.SaveChanges();
+        await repository.SaveChangesAsync();
 
         return ToResponseDTO(vault);
     }
 
-    public async Task<ResponseVaultDetailDTO> GetByIdWithCredentials(int userId, int vaultId)
+    public async Task<ResponseVaultDetailDTO> GetByIdWithCredentialsAsync(int userId, int vaultId)
     {
-        var vault = await GetByIdOrThrow(userId, vaultId);
+        var vault = await GetByIdOrThrowAsync(userId, vaultId);
 
         return ToResponseDetailDTO(vault);
     }
 
-    private async Task<Vault> GetByIdOrThrow(int userId, int vaultId)
+    private async Task<Vault> GetByIdOrThrowAsync(int userId, int vaultId)
     {
-        var vault = await repository.GetById(userId, vaultId)
+        var vault = await repository.GetByIdAsync(userId, vaultId)
             ?? throw new VaultNotFoundException("vault not found");
         return vault;
     }

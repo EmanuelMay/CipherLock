@@ -9,9 +9,9 @@ public class AuthService(
     ITokenService tokenService
 ) : IAuthService
 {
-    public async Task<string> Login(LoginDTO dto)
+    public async Task<string> LoginAsync(LoginDTO dto)
     {
-        var user = await userRepository.GetByEmail(dto.Email)
+        var user = await userRepository.GetByEmailAsync(dto.Email)
             ?? throw new InvalidCredentialsException("invalid credentials");
         
         if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))

@@ -4,11 +4,11 @@ namespace CipherLock.Domain.Interfaces;
 
 public interface IVaultRepository
 {
-    public Task SaveChanges();
+    public Task SaveChangesAsync();
     
-    public Task Add(Vault vault);
+    public Task AddAsync(Vault vault);
 
-    public Task<IEnumerable<Vault>> SearchByName(int id, string name);
+    public Task<IEnumerable<Vault>> SearchByNameAsync(int id, string name);
     
-    public Task<Vault?> GetById(int userId, int vaultId);
+    public Task<Vault?> GetByIdAsync(int userId, int vaultId);
 }

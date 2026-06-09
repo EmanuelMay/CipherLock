@@ -4,11 +4,11 @@ namespace CipherLock.Domain.Interfaces;
 
 public interface IVaultService
 {
-    public Task<ResponseVaultDTO> Add(int id, CreateVaultDTO dto);
+    public Task<ResponseVaultDTO> AddAsync(int id, CreateVaultDTO dto);
 
-    public Task<IEnumerable<ResponseVaultDTO>> SearchByName(int userId, string name);
+    public Task<IEnumerable<ResponseVaultDTO>> SearchByNameAsync(int userId, string name);
 
-    public Task<ResponseVaultDTO> Update(int userId, int vaultId, UpdateVaultDTO dto);
+    public Task<ResponseVaultDTO> UpdateAsync(int userId, int vaultId, UpdateVaultDTO dto);
 
-    public Task<ResponseVaultDetailDTO> GetByIdWithCredentials(int userId, int vaultId);
+    public Task<ResponseVaultDetailDTO> GetByIdWithCredentialsAsync(int userId, int vaultId);
 }

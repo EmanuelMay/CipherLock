@@ -9,16 +9,16 @@ public class VaultRepository(
     AppDbContext context
 ) : IVaultRepository
 {
-    public async Task SaveChanges()
+    public async Task SaveChangesAsync()
         => await context.SaveChangesAsync();
     
-    public async Task Add(Vault vault)
+    public async Task AddAsync(Vault vault)
         => await context.Vaults.AddAsync(vault);
     
-    public async Task<IEnumerable<Vault>> SearchByName(int userId, string name)
+    public async Task<IEnumerable<Vault>> SearchByNameAsync(int userId, string name)
         => await context.Vaults.Where(x => x.Name.Contains(name) && x.UserId == userId).ToListAsync();
 
-    public async Task<Vault?> GetById(int userId, int vaultId)
+    public async Task<Vault?> GetByIdAsync(int userId, int vaultId)
         => await context.Vaults.
         Include(x => x.Credentials).
         FirstOrDefaultAsync(x => x.Id == vaultId && x.UserId == userId);
