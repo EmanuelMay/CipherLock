@@ -16,11 +16,11 @@ public class UserController(
     public async Task<ActionResult<ResponseUserDTO>> AddAsync([FromBody] CreateUserDTO dto)
     {
         var result = await userService.AddAsync(dto);
-        return CreatedAtAction(nameof(GetByIdAsync), null, result);
+        return CreatedAtRoute("GetUserById", null, result);
     }
 
-    [HttpGet("me")]
     [Authorize]
+    [HttpGet("me", Name = "GetUserById")]
     public async Task<ActionResult<ResponseUserDTO>> GetByIdAsync()
     {
         var id = User.FindFirst(ClaimTypes.Name)?.Value;

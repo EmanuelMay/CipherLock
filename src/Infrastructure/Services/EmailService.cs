@@ -3,7 +3,7 @@ using CipherLock.Domain.Exceptions;
 using MailKit.Net.Smtp;
 using MimeKit;
 
-namespace CipherLock.Application.Services;
+namespace CipherLock.Infrastructure.Services;
 
 public class EmailService(
     IConfiguration configuration,

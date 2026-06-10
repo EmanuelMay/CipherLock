@@ -6,7 +6,7 @@ using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CipherLock.Application.Services;
+namespace CipherLock.Infrastructure.Services;
 
 public class TokenService(
     IConfiguration configuration

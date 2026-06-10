@@ -5,6 +5,7 @@ using CipherLock.Domain.Exceptions;
 using CipherLock.Domain.Interfaces;
 using CipherLock.Infrastructure.Context;
 using CipherLock.Infrastructure.Repositories;
+using CipherLock.Infrastructure.Services;
 using CipherLock.Presentation.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
