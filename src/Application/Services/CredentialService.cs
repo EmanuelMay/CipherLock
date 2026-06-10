@@ -43,6 +43,13 @@ public class CredentialService(
         return ToDTO(credential);
     }
 
+    public async Task<IEnumerable<ResponseCredentialDTO>> GetAllByVaultAsync(int vaultId)
+    {
+        var vaults = await credentialRepository.GetAllByVaultAsync(vaultId);
+
+        return vaults.Select(x => ToDTO(x));
+    }
+
     private ResponseCredentialDTO ToDTO(Credential credential)
     {
         return new ResponseCredentialDTO

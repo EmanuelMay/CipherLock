@@ -29,17 +29,24 @@ public class Credential
     public int VaultId { get; private set; }
     public Vault Vault { get; private set; } = null!;
 
-    public void Update(string title, string username)
+    public void Update(string? title, string? username)
     {
-        if (title.Length > 150)
-            throw new ArgumentException("the title cannot be longer than 150");
-        if (username.Length > 150)
-            throw new ArgumentException("the username cannot be longer than 150");
+        UpdateValidation(title, username);
 
         if (!string.IsNullOrWhiteSpace(title))
             Title = title;
         if (!string.IsNullOrWhiteSpace(username))
             Username = username;
+    }
+
+    private void UpdateValidation(string? title, string? username)
+    {
+        if (!string.IsNullOrWhiteSpace(title))
+            if (title.Length > 150)
+                throw new ArgumentException("the name cannot be longer than 150");
+        if (!string.IsNullOrWhiteSpace(username))
+            if (username.Length > 150)
+                throw new ArgumentException("the username cannot be longer than 150");
     }
 
     private void Validation(string title, string username)

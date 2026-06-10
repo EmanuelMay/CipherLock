@@ -21,8 +21,21 @@ public class CredentialController(
     }
 
     [Authorize]
+    [HttpGet("{vaultId:int}")]
+    public async Task<ActionResult<IEnumerable<ResponseCredentialDTO>>> GetAllByVaultAsync(int vaultId)
+    {
+        var result = await credentialService.GetAllByVaultAsync(vaultId);
+
+        return Ok(result);
+    }
+
+    [Authorize]
     [HttpPatch("{vaultId:int}/{credentialId:int}")]
-    public async Task<ActionResult<ResponseCredentialDTO>> UpdateAsync(int vaultId, int credentialId, [FromBody] UpdateCredentialDTO dto)
+    public async Task<ActionResult<ResponseCredentialDTO>> UpdateAsync(
+        int vaultId,
+        int credentialId,
+        [FromBody] UpdateCredentialDTO dto
+    )
     {
         var result = await credentialService.UpdateAsync(vaultId, credentialId, dto);
         return Ok(result);

@@ -17,4 +17,7 @@ public class CredentialRepository(
     
     public async Task<Credential?> GetByIdAsync(int credentialId, int vaultId)
         => await context.Credentials.FirstOrDefaultAsync(x => x.Id == credentialId && x.VaultId == vaultId);
+    
+    public async Task<IEnumerable<Credential>> GetAllByVaultAsync(int vaultId)
+        => await context.Credentials.Where(x => x.VaultId == vaultId).ToListAsync();
 }
