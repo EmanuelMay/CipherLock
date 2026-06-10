@@ -1,4 +1,4 @@
-using CipherLock.Application.Services;
+using CipherLock.Application.DTO;
 
 namespace CipherLock.Domain.Interfaces;
 
@@ -11,4 +11,8 @@ public interface IVaultService
     public Task<ResponseVaultDTO> UpdateAsync(int userId, int vaultId, UpdateVaultDTO dto);
 
     public Task<ResponseVaultDetailDTO> GetByIdWithCredentialsAsync(int userId, int vaultId);
+
+    public Task<IEnumerable<ResponseVaultDTO>> GetAllAsync(int userId);
+
+    public Task DeleteAsync(int userId, int vaultId);
 }

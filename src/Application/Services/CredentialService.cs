@@ -13,7 +13,8 @@ public class CredentialService(
 {
     public async Task<ResponseCredentialDTO> AddAsync(int userId, CreateCredentialDTO dto)
     {
-        await GetOrThrowVaultAsync(userId, dto.VaultId);
+        var vault = await GetOrThrowVaultAsync(userId, dto.VaultId);
+        vault.Modify();
 
         var iv = RandomNumberGenerator.GetBytes(16);
         var iv64 = Convert.ToBase64String(iv);
@@ -27,6 +28,16 @@ public class CredentialService(
         );
 
         await credentialRepository.AddAsync(credential);
+        await credentialRepository.SaveChangesAsync();
+
+        return ToDTO(credential);
+    }
+
+    public async Task<ResponseCredentialDTO> UpdateAsync(int vaultId, int credentialId, UpdateCredentialDTO dto)
+    {
+        var credential = await GetOrThrowCredentialAsync(credentialId, vaultId);
+
+        credential.Update(dto.Title, dto.Username);
         await credentialRepository.SaveChangesAsync();
 
         return ToDTO(credential);
@@ -49,5 +60,12 @@ public class CredentialService(
         var vault = await vaultRepository.GetByIdAsync(userId, vaultId)
             ?? throw new CredentialNotFoundException("credential not found");
         return vault;
+    }
+
+    private async Task<Credential> GetOrThrowCredentialAsync(int credentialId, int vaultId)
+    {
+        var credential = await credentialRepository.GetByIdAsync(credentialId, vaultId)
+            ?? throw new CredentialNotFoundException("credential not found");
+        return credential;
     }
 }

@@ -46,6 +46,21 @@ public class VaultService(
         return ToResponseDetailDTO(vault);
     }
 
+    public async Task<IEnumerable<ResponseVaultDTO>> GetAllAsync(int userId)
+    {
+        var vaults = await repository.GetAllAsync(userId);
+
+        return vaults.Select(x => ToResponseDTO(x));
+    }
+
+    public async Task DeleteAsync(int userId, int vaultId)
+    {
+        var vault = await GetByIdOrThrowAsync(userId, vaultId);
+
+        repository.Remove(vault);
+        await repository.SaveChangesAsync();
+    }
+
     private async Task<Vault> GetByIdOrThrowAsync(int userId, int vaultId)
     {
         var vault = await repository.GetByIdAsync(userId, vaultId)

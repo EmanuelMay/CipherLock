@@ -19,4 +19,12 @@ public class CredentialController(
         var userId = User.FindFirst(ClaimTypes.Name)?.Value;
         return Ok(await credentialService.AddAsync(int.Parse(userId!), dto));
     }
+
+    [Authorize]
+    [HttpPatch("{vaultId:int}/{credentialId:int}")]
+    public async Task<ActionResult<ResponseCredentialDTO>> UpdateAsync(int vaultId, int credentialId, [FromBody] UpdateCredentialDTO dto)
+    {
+        var result = await credentialService.UpdateAsync(vaultId, credentialId, dto);
+        return Ok(result);
+    }
 }

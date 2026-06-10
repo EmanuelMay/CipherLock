@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using CipherLock.Application.DTO;
 
-namespace CipherLock.Application.Services;
+namespace CipherLock.Application.DTO;
 
 public class ResponseVaultDTO
 {

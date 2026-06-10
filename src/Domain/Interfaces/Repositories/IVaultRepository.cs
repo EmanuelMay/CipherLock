@@ -11,4 +11,8 @@ public interface IVaultRepository
     public Task<IEnumerable<Vault>> SearchByNameAsync(int id, string name);
     
     public Task<Vault?> GetByIdAsync(int userId, int vaultId);
+
+    public Task<IEnumerable<Vault>> GetAllAsync(int userId);
+
+    public void Remove(Vault vault);
 }

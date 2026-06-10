@@ -29,6 +29,11 @@ public class Vault
         ModifiedAt = DateTime.UtcNow;
     }
 
+    public void Modify()
+    {
+        ModifiedAt = DateTime.UtcNow;
+    }
+
     private void Validation(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

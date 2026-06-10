@@ -22,4 +22,10 @@ public class VaultRepository(
         => await context.Vaults.
         Include(x => x.Credentials).
         FirstOrDefaultAsync(x => x.Id == vaultId && x.UserId == userId);
+
+    public async Task<IEnumerable<Vault>> GetAllAsync(int userId)
+        => await context.Vaults.Where(x => x.UserId == userId).ToListAsync();
+    
+    public void Remove(Vault vault)
+        => context.Vaults.Remove(vault);
 }

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CipherLock.Application.DTO;
 
 public class ResponseCredentialDTO
@@ -11,8 +13,26 @@ public class ResponseCredentialDTO
 
 public class CreateCredentialDTO
 {
+    [Required]
+    [StringLength(150)]
     public string Title { get; set; } = null!;
+
+    [Required]
+    [StringLength(150)]
     public string Username { get; set; } = null!;
+
+    [Required]
     public int VaultId { get; set; }
+
+    [Required]
     public string EncryptedPassword { get; set; } = null!;
+}
+
+public class UpdateCredentialDTO
+{
+    [Required]
+    public string Title { get; set; } = null!;
+
+    [Required]
+    public string Username { get; set; } = null!;
 }

@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using CipherLock.Application.Services;
+using CipherLock.Application.DTO;
 using CipherLock.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +18,11 @@ public class VaultController(
         [FromBody] CreateVaultDTO dto
     )
     {
-        var id = User.FindFirst(ClaimTypes.Name)?.Value;
+        var userId = User.FindFirst(ClaimTypes.Name)?.Value;
 
-        var result = await vaultService.AddAsync(int.Parse(id!), dto);
+        var result = await vaultService.AddAsync(int.Parse(userId!), dto);
 
-        return CreatedAtAction(nameof(GetByIdWithCredentialsAsync), new { vaultId = result.Id}, result);
+        return CreatedAtRoute("GetVaultById", new { vaultId = result.Id}, result);
     }
 
     [Authorize]
@@ -47,10 +47,28 @@ public class VaultController(
     }
 
     [Authorize]
-    [HttpGet("{vaultId:int}")]
+    [HttpGet("{vaultId:int}", Name = "GetVaultById")]
     public async Task<ActionResult<ResponseVaultDetailDTO>> GetByIdWithCredentialsAsync(int vaultId)
     {
         var userId = User.FindFirst(ClaimTypes.Name)?.Value;
         return Ok(await vaultService.GetByIdWithCredentialsAsync(int.Parse(userId!), vaultId));
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ResponseVaultDTO>>> GetAllAsync()
+    {
+        var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+        return Ok(await vaultService.GetAllAsync(int.Parse(userId!)));
+    }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteAsync(int id)
+    {
+        var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+        await vaultService.DeleteAsync(int.Parse(userId!), id);
+
+        return NoContent();
     }
 }
