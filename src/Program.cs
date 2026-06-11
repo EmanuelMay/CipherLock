@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(cfg => {}, typeof(VaultProfile), typeof(UserProfile), typeof(CredentialProfile));
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -29,8 +29,6 @@ builder.Services.AddScoped<ICredentialService, CredentialService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVaultRepository, VaultRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
-
-builder.Services.AddAutoMapper(typeof(VaultProfile));
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -70,8 +68,10 @@ builder.Services
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtKey)),
-            ValidateIssuer   = false,
-            ValidateAudience = false,
+            ValidateIssuer   = true,
+            ValidIssuer      = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience    = builder.Configuration["Jwt:Audience"],
             ValidateLifetime = true,
             ClockSkew        = TimeSpan.Zero,
         };

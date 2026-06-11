@@ -34,4 +34,7 @@ public class UserRepository(
             x.UserId == id &&
             !x.IsUsed
         );
+    
+    public void Delete(User user)
+        => context.Users.Remove(user);
 }

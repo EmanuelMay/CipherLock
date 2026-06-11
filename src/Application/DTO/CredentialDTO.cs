@@ -28,9 +28,6 @@ public class CreateCredentialDTO
 
 public class UpdateCredentialDTO
 {
-    [Required]
     public string? Title { get; set; } = null!;
-
-    [Required]
     public string? Username { get; set; } = null!;
 }

@@ -8,7 +8,7 @@ public interface ICredentialRepository
 
     public Task AddAsync(Credential credential);
 
-    public Task<Credential?> GetByIdAsync(int userId, int credentialId);
+    public Task<Credential?> GetByIdAsync(int userId, int vaultId, int credentialId);
 
     public Task<IEnumerable<Credential>> GetAllByVaultAsync(int credentialId, int vaultId);
 }

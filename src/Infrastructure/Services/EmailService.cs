@@ -41,7 +41,7 @@ public class EmailService(
 
         using (var client = new SmtpClient())
         {
-            await client.ConnectAsync("smtp.gmail.com", 587, false);
+            await client.ConnectAsync("smtp.gmail.com", 587, true);
             await client.AuthenticateAsync(address, password);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);

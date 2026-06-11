@@ -38,7 +38,8 @@ public class CredentialController(
         [FromBody] UpdateCredentialDTO dto
     )
     {
-        var result = await credentialService.UpdateAsync(vaultId, credentialId, dto);
+        var userId = User.FindFirstValue(ClaimTypes.Name);
+        var result = await credentialService.UpdateAsync(int.Parse(userId!), vaultId, credentialId, dto);
         return Ok(result);
     }
 }

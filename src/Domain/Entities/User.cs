@@ -22,18 +22,12 @@ public class User
     public string Name { get; private set; } = null!;
     public string Email { get; private set; } = null!;
     public string PasswordHash { get; private set; } = null!;
-    public bool IsDeleted { get; private set; } = false;
     public UserRoles Role { get; private set; }
     public ICollection<Vault> Vaults { get; private set; } = [];
 
     public void ChangeRole(UserRoles role)
     {
         Role = role;
-    }
-
-    public void Delete()
-    {
-        IsDeleted = true;
     }
 
     public void Update(string? name, string? email)
@@ -67,7 +61,7 @@ public class User
         }
     }
 
-    private static void Validation(string name, string email, string password)
+    private void Validation(string name, string email, string password)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("name cannot be null");

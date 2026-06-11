@@ -36,9 +36,14 @@ public class CredentialService(
         return mapper.Map<ResponseCredentialDTO>(credential);
     }
 
-    public async Task<ResponseCredentialDTO> UpdateAsync(int vaultId, int credentialId, UpdateCredentialDTO dto)
+    public async Task<ResponseCredentialDTO> UpdateAsync(
+        int userId,
+        int vaultId,
+        int credentialId,
+        UpdateCredentialDTO dto
+    )
     {
-        var credential = await GetOrThrowCredentialAsync(credentialId, vaultId);
+        var credential = await GetOrThrowCredentialAsync(userId, credentialId, vaultId);
 
         credential.Update(dto.Title, dto.Username);
         await credentialRepository.SaveChangesAsync();
@@ -60,9 +65,9 @@ public class CredentialService(
         return vault;
     }
 
-    private async Task<Credential> GetOrThrowCredentialAsync(int credentialId, int vaultId)
+    private async Task<Credential> GetOrThrowCredentialAsync(int userId, int credentialId, int vaultId)
     {
-        var credential = await credentialRepository.GetByIdAsync(credentialId, vaultId)
+        var credential = await credentialRepository.GetByIdAsync(userId, credentialId, vaultId)
             ?? throw new CredentialNotFoundException("credential not found");
         return credential;
     }

@@ -38,7 +38,7 @@ public class UserService(
     {
         var user = await GetByIdOrThrowAsync(id);
 
-        user.Delete();
+        repository.Delete(user);
         await repository.SaveChangesAsync();
     }
 

@@ -17,4 +17,6 @@ public interface IUserRepository
     public Task AddUserResetPasswordAsync(UserResetPassword resetPassword);
 
     public Task<UserResetPassword?> GetUserResetPasswordAsync(int id, string code);
+
+    public void Delete(User user);
 }

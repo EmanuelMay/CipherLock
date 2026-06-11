@@ -16,9 +16,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .ToTable("users");
 
         mb.Entity<User>()
-            .HasQueryFilter(x => !x.IsDeleted);
-
-        mb.Entity<User>()
             .HasIndex(x => x.Email)
             .IsUnique();
     
@@ -36,9 +33,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         
         mb.Entity<Vault>()
             .ToTable("vaults");
-
-        mb.Entity<Vault>()
-            .HasQueryFilter(x => !x.User.IsDeleted);
         
         mb.Entity<Vault>()
             .Property(x => x.Name)
@@ -46,9 +40,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         
         mb.Entity<Credential>()
             .ToTable("credentials");
-        
-        mb.Entity<Credential>()
-            .HasQueryFilter(x => !x.Vault.User.IsDeleted);
         
         mb.Entity<Credential>()
             .Property(x => x.Title)
@@ -64,8 +55,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         
         mb.Entity<UserResetPassword>()
             .ToTable("user_reset_passwords");
-        
-        mb.Entity<UserResetPassword>()
-            .HasQueryFilter(x => !x.User.IsDeleted);
     }
 }
