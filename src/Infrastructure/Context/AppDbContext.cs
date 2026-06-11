@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Vault> Vaults { get; private set; }
     public DbSet<Credential> Credentials { get; private set; }
     public DbSet<UserResetPassword> UserResetPasswords { get; private set; }
+    public DbSet<UserWelcomeConfirm> UserWelcomeConfirms { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
@@ -47,7 +48,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         
         mb.Entity<Credential>()
             .Property(x => x.EncryptedPassword)
-            .HasColumnType("varchar(150)");
+            .HasColumnType("text");
         
         mb.Entity<Credential>()
             .Property(x => x.IV)
@@ -55,5 +56,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         
         mb.Entity<UserResetPassword>()
             .ToTable("user_reset_passwords");
+        
+        mb.Entity<UserWelcomeConfirm>()
+            .ToTable("user_welcome_confirm");
     }
 }

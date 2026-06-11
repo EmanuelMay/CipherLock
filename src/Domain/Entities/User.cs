@@ -16,19 +16,22 @@ public class User
         Email = email;
         PasswordHash = passwordHash;
         Role = UserRoles.User;
+        IsActive = false;
     }
 
     public int Id { get; private set; }
     public string Name { get; private set; } = null!;
     public string Email { get; private set; } = null!;
     public string PasswordHash { get; private set; } = null!;
+    public bool IsActive { get; private set; }
     public UserRoles Role { get; private set; }
     public ICollection<Vault> Vaults { get; private set; } = [];
 
-    public void ChangeRole(UserRoles role)
-    {
-        Role = role;
-    }
+    public void ChangeRole(UserRoles role) => Role = role;
+
+    public void UpdatePassword(string passwordHash) => PasswordHash = passwordHash;
+
+    public void Activate() => IsActive = true;
 
     public void Update(string? name, string? email)
     {
@@ -38,11 +41,6 @@ public class User
             Name = name;
         if (!string.IsNullOrWhiteSpace(email))
             Email = email;
-    }
-
-    public void UpdatePassword(string passwordHash)
-    {
-        PasswordHash = passwordHash;
     }
 
     private void UpdateValidation(string? name, string? email)

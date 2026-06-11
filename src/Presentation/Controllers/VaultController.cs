@@ -62,7 +62,7 @@ public class VaultController(
     }
 
     [Authorize]
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{vaultId:int}")]
     public async Task<ActionResult> DeleteAsync(int vaultId)
     {
         var userId = User.FindFirstValue(ClaimTypes.Name);

@@ -30,6 +30,8 @@ public class TokenService(
             Subject = GenerateClaims(user),
             SigningCredentials = credentials,
             Expires = DateTime.UtcNow.AddHours(2),
+            Issuer = configuration["Jwt:Issuer"],
+            Audience = configuration["Jwt:Audience"]
         };
 
         var token = handler.CreateToken(tokenDescriptor);

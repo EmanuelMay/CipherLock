@@ -18,5 +18,9 @@ public interface IUserRepository
 
     public Task<UserResetPassword?> GetUserResetPasswordAsync(int id, string code);
 
+    public Task AddUserWelcomeConfirmAsync(UserWelcomeConfirm confirm);
+
+    public Task<UserWelcomeConfirm?> GetUserWelcomeConfirmAsync(int userId, string code);
+
     public void Delete(User user);
 }

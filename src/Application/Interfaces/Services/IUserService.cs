@@ -15,4 +15,6 @@ public interface IUserService
     public Task ForgotPasswordAsync(ForgotPasswordDTO dto);
 
     public Task ResetPasswordAsync(ResetPasswordDTO dto);
+
+    public Task WelcomeConfirmAsync(WelcomeConfirmDTO dto);
 }

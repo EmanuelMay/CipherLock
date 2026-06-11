@@ -17,6 +17,9 @@ public class AuthService(
         
         if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             throw new InvalidCredentialsException("invalid credentials");
+        
+        if (!user.IsActive)
+            throw new UserNotActiveException("account is not confirmed");
 
         return tokenService.Generate(user);
     }

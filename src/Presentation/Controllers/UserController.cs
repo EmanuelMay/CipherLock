@@ -63,4 +63,11 @@ public class UserController(
 
         return Ok();
     }
+
+    [HttpPost("welcome-confirm")]
+    public async Task<ActionResult> WelcomeConfirmAsync([FromBody] WelcomeConfirmDTO dto)
+    {
+        await userService.WelcomeConfirmAsync(dto);
+        return Ok();
+    }
 }

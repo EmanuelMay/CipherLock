@@ -19,10 +19,21 @@ public class UserService(
         if (dto.Password.Length < 8)
             throw new InvalidPasswordLengthException("the password cannot be less than 8.");
         
-        var user = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
+        if (await repository.EmailExistsAsync(dto.Email))
+        {
+            await emailService.EmailAlreadyExistsAsync(dto.Email, dto.Name);
+            return new ResponseUserDTO();
+        }
 
+        var user = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
         await repository.AddAsync(user);
         await repository.SaveChangesAsync();
+
+        var code = RandomNumberGenerator.GetInt32(100_000, 999_999).ToString();
+        var welcome = new UserWelcomeConfirm(code, user.Id);
+        await repository.AddUserWelcomeConfirmAsync(welcome);
+        await repository.SaveChangesAsync();
+        await emailService.WelcomeConfirmAsync(user.Email, user.Name, code);
 
         return mapper.Map<ResponseUserDTO>(user);
     }
@@ -54,7 +65,10 @@ public class UserService(
     
     public async Task ForgotPasswordAsync(ForgotPasswordDTO dto)
     {
-        var user = await GetByEmailOrThrowAsync(dto.Email);
+        var user = await repository.GetByEmailAsync(dto.Email);
+
+        if (user is null)
+            return;
 
         var code = RandomNumberGenerator.GetInt32(100_000, 999_999).ToString();
 
@@ -63,7 +77,7 @@ public class UserService(
         await repository.AddUserResetPasswordAsync(resetPassword);
         await repository.SaveChangesAsync();
 
-        await emailService.ResetPasswordEmailAsync(user.Email, user.Name, code);
+        await emailService.ResetPasswordAsync(user.Email, user.Name, code);
     }
 
     public async Task ResetPasswordAsync(ResetPasswordDTO dto)
@@ -71,7 +85,11 @@ public class UserService(
         if (dto.Password.Length < 8)
             throw new InvalidPasswordLengthException("The password cannot be less than 8.");
 
-        var user = await GetByEmailOrThrowAsync(dto.Email);
+        var user = await repository.GetByEmailAsync(dto.Email);
+
+        if (user is null)
+            return;
+
         var resetPassword = await repository.GetUserResetPasswordAsync(user.Id, dto.Code)
             ?? throw new InvalidCredentialsException("invalid credentials");
 
@@ -82,11 +100,19 @@ public class UserService(
         await repository.SaveChangesAsync();
     }
 
-    private async Task<User> GetByEmailOrThrowAsync(string email)
+    public async Task WelcomeConfirmAsync(WelcomeConfirmDTO dto)
     {
-        var user = await repository.GetByEmailAsync(email)
-            ?? throw new UserNotFoundException("user not found");
-        return user;
+        var user = await repository.GetByEmailAsync(dto.Email);
+
+        if (user is null)
+            return;
+
+        var confirm = await repository.GetUserWelcomeConfirmAsync(user.Id, dto.Code)
+            ?? throw new InvalidCredentialsException("invalid credentials");
+
+        confirm.Use();
+        user.Activate();
+        await repository.SaveChangesAsync();
     }
 
     private async Task<User> GetByIdOrThrowAsync(int id)

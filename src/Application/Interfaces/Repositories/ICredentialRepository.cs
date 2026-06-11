@@ -10,5 +10,5 @@ public interface ICredentialRepository
 
     public Task<Credential?> GetByIdAsync(int userId, int vaultId, int credentialId);
 
-    public Task<IEnumerable<Credential>> GetAllByVaultAsync(int credentialId, int vaultId);
+    public Task<IEnumerable<Credential>> GetAllByVaultAsync(int vaultId, int userId);
 }

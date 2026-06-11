@@ -59,3 +59,13 @@ public class ResetPasswordDTO
     [Required]
     public string Password { get; set; } = null!;
 }
+
+public class WelcomeConfirmDTO
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = null!;
+
+    [Required]
+    public string Code { get; set; } = null!;
+}

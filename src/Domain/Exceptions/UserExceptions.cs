@@ -26,3 +26,12 @@ public class InvalidCredentialsException : Exception
 
     public InvalidCredentialsException(string message, Exception inner) : base(message, inner) { }
 }
+
+public class UserNotActiveException : Exception
+{
+    public UserNotActiveException() : base() { }
+
+    public UserNotActiveException(string message) : base(message) { }
+
+    public UserNotActiveException(string message, Exception inner) : base(message, inner) { }
+}

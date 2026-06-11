@@ -35,6 +35,12 @@ public class UserRepository(
             !x.IsUsed
         );
     
+    public async Task AddUserWelcomeConfirmAsync(UserWelcomeConfirm confirm)
+        => await context.UserWelcomeConfirms.AddAsync(confirm);
+    
+    public async Task<UserWelcomeConfirm?> GetUserWelcomeConfirmAsync(int userId, string code)
+        => await context.UserWelcomeConfirms.FirstOrDefaultAsync(x => x.UserId == userId && x.Code == code);
+    
     public void Delete(User user)
         => context.Users.Remove(user);
 }
