@@ -1,8 +1,8 @@
 using System.Text;
 using CipherLock.Application.Services;
-using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Repositories;
+using CipherLock.Application.Interfaces.Services;
 using CipherLock.Infrastructure.Context;
 using CipherLock.Infrastructure.Repositories;
 using CipherLock.Infrastructure.Services;
@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using CipherLock.Application.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ builder.Services.AddScoped<ICredentialService, CredentialService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVaultRepository, VaultRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
+
+builder.Services.AddAutoMapper(typeof(VaultProfile));
 
 builder.Services.AddSwaggerGen(options =>
 {

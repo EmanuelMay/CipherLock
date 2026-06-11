@@ -1,5 +1,5 @@
 using CipherLock.Application.DTO;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CipherLock.Presentation.Controllers;

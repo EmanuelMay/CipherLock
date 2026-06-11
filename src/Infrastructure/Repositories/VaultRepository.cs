@@ -1,5 +1,5 @@
 using CipherLock.Domain.Entities;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 

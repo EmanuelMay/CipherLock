@@ -14,11 +14,9 @@ public class ResponseCredentialDTO
 public class CreateCredentialDTO
 {
     [Required]
-    [StringLength(150)]
     public string Title { get; set; } = null!;
 
     [Required]
-    [StringLength(150)]
     public string Username { get; set; } = null!;
 
     [Required]

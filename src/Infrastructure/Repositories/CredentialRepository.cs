@@ -1,5 +1,5 @@
 using CipherLock.Domain.Entities;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +18,6 @@ public class CredentialRepository(
     public async Task<Credential?> GetByIdAsync(int credentialId, int vaultId)
         => await context.Credentials.FirstOrDefaultAsync(x => x.Id == credentialId && x.VaultId == vaultId);
     
-    public async Task<IEnumerable<Credential>> GetAllByVaultAsync(int vaultId)
-        => await context.Credentials.Where(x => x.VaultId == vaultId).ToListAsync();
+    public async Task<IEnumerable<Credential>> GetAllByVaultAsync(int vaultId, int userId)
+        => await context.Credentials.Where(x => x.VaultId == vaultId && x.Vault.UserId == userId).ToListAsync();
 }

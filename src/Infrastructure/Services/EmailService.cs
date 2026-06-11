@@ -1,4 +1,4 @@
-using CipherLock.Domain.Entities;
+using CipherLock.Application.Interfaces.Services;
 using CipherLock.Domain.Exceptions;
 using MailKit.Net.Smtp;
 using MimeKit;

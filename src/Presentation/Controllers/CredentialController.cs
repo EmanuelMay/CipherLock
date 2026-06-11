@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using CipherLock.Application.DTO;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +24,8 @@ public class CredentialController(
     [HttpGet("{vaultId:int}")]
     public async Task<ActionResult<IEnumerable<ResponseCredentialDTO>>> GetAllByVaultAsync(int vaultId)
     {
-        var result = await credentialService.GetAllByVaultAsync(vaultId);
+        var userId = User.FindFirstValue(ClaimTypes.Name);
+        var result = await credentialService.GetAllByVaultAsync(vaultId, int.Parse(userId!));
 
         return Ok(result);
     }

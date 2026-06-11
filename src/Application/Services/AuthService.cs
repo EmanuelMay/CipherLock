@@ -1,6 +1,7 @@
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Exceptions;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Repositories;
+using CipherLock.Application.Interfaces.Services;
 
 namespace CipherLock.Application.Services;
 

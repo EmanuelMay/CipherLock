@@ -1,22 +1,25 @@
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Repositories;
+using CipherLock.Application.Interfaces.Services;
+using AutoMapper;
 
 namespace CipherLock.Application.Services;
 
 public class VaultService(
-    IVaultRepository repository
+    IVaultRepository repository,
+    IMapper mapper
 ) : IVaultService
 {
-    public async Task<ResponseVaultDTO> AddAsync(int id, CreateVaultDTO dto)
+    public async Task<ResponseVaultDTO> AddAsync(int userId, CreateVaultDTO dto)
     {
-        var vault = new Vault(dto.Name, id);
+        var vault = new Vault(dto.Name, userId);
 
         await repository.AddAsync(vault);
         await repository.SaveChangesAsync();
 
-        return ToResponseDTO(vault);
+        return mapper.Map<ResponseVaultDTO>(vault);
     }
 
     public async Task<IEnumerable<ResponseVaultDTO>> SearchByNameAsync(
@@ -26,7 +29,7 @@ public class VaultService(
     {
         var vaults = await repository.SearchByNameAsync(userId, name);
 
-        return vaults.Select(x => ToResponseDTO(x));
+        return vaults.Select(x => mapper.Map<ResponseVaultDTO>(x));
     }
 
     public async Task<ResponseVaultDTO> UpdateAsync(int userId, int vaultId, UpdateVaultDTO dto)
@@ -36,21 +39,21 @@ public class VaultService(
         vault.Update(dto.Name);
         await repository.SaveChangesAsync();
 
-        return ToResponseDTO(vault);
+        return mapper.Map<ResponseVaultDTO>(vault);
     }
 
     public async Task<ResponseVaultDetailDTO> GetByIdWithCredentialsAsync(int userId, int vaultId)
     {
         var vault = await GetByIdOrThrowAsync(userId, vaultId);
 
-        return ToResponseDetailDTO(vault);
+        return mapper.Map<ResponseVaultDetailDTO>(vault);
     }
 
     public async Task<IEnumerable<ResponseVaultDTO>> GetAllAsync(int userId)
     {
         var vaults = await repository.GetAllAsync(userId);
 
-        return vaults.Select(x => ToResponseDTO(x));
+        return vaults.Select(x => mapper.Map<ResponseVaultDTO>(x));
     }
 
     public async Task DeleteAsync(int userId, int vaultId)
@@ -66,36 +69,5 @@ public class VaultService(
         var vault = await repository.GetByIdAsync(userId, vaultId)
             ?? throw new VaultNotFoundException("vault not found");
         return vault;
-    }
-
-    private ResponseVaultDetailDTO ToResponseDetailDTO(Vault vault)
-    {
-        return new ResponseVaultDetailDTO
-        {
-            Id = vault.Id,
-            Name = vault.Name,
-            CreatedAt = vault.CreatedAt,
-            ModifiedAt = vault.ModifiedAt,
-            UserId = vault.UserId,
-            Credentials = vault.Credentials.Select(x => new ResponseCredentialDTO
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Username = x.Username,
-                EncryptedPassword = x.EncryptedPassword
-            }).ToList()
-        };
-    }
-
-    private ResponseVaultDTO ToResponseDTO(Vault vault)
-    {
-        return new ResponseVaultDTO()
-        {
-            Id = vault.Id,
-            Name = vault.Name,
-            CreatedAt = vault.CreatedAt,
-            ModifiedAt = vault.ModifiedAt,
-            UserId = vault.UserId
-        };
     }
 }

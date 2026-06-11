@@ -14,16 +14,13 @@ public class ResponseUserDTO
 public class CreateUserDTO
 {
     [Required]
-    [StringLength(150)]
     public string Name { get; set; } = null!;
 
     [Required]
-    [StringLength(255)]
     [EmailAddress]
     public string Email { get; set; } = null!;
 
     [Required]
-    [MinLength(8)]
     public string Password { get; set; } = null!;
 }
 
@@ -34,7 +31,6 @@ public class LoginDTO
     public string Email { get; set; } = null!;
 
     [Required]
-    [MinLength(8)]
     public string Password { get; set; } = null!;
 }
 

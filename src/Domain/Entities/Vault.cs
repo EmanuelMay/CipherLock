@@ -37,6 +37,6 @@ public class Vault
     private void Validation(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("the name cannot be longer than 150");
+            throw new ArgumentException("name cannot be null");
     }
 }

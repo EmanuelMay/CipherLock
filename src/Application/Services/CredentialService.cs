@@ -2,13 +2,16 @@ using System.Security.Cryptography;
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Repositories;
+using CipherLock.Application.Interfaces.Services;
+using AutoMapper;
 
 namespace CipherLock.Application.Services;
 
 public class CredentialService(
     ICredentialRepository credentialRepository,
-    IVaultRepository vaultRepository
+    IVaultRepository vaultRepository,
+    IMapper mapper
 ) : ICredentialService
 {
     public async Task<ResponseCredentialDTO> AddAsync(int userId, CreateCredentialDTO dto)
@@ -30,7 +33,7 @@ public class CredentialService(
         await credentialRepository.AddAsync(credential);
         await credentialRepository.SaveChangesAsync();
 
-        return ToDTO(credential);
+        return mapper.Map<ResponseCredentialDTO>(credential);
     }
 
     public async Task<ResponseCredentialDTO> UpdateAsync(int vaultId, int credentialId, UpdateCredentialDTO dto)
@@ -40,32 +43,20 @@ public class CredentialService(
         credential.Update(dto.Title, dto.Username);
         await credentialRepository.SaveChangesAsync();
 
-        return ToDTO(credential);
+        return mapper.Map<ResponseCredentialDTO>(credential);
     }
 
-    public async Task<IEnumerable<ResponseCredentialDTO>> GetAllByVaultAsync(int vaultId)
+    public async Task<IEnumerable<ResponseCredentialDTO>> GetAllByVaultAsync(int vaultId, int userId)
     {
-        var vaults = await credentialRepository.GetAllByVaultAsync(vaultId);
+        var vaults = await credentialRepository.GetAllByVaultAsync(vaultId, userId);
 
-        return vaults.Select(x => ToDTO(x));
-    }
-
-    private ResponseCredentialDTO ToDTO(Credential credential)
-    {
-        return new ResponseCredentialDTO
-        {
-            Id = credential.Id,
-            Title = credential.Title,
-            Username = credential.Username,
-            VaultId = credential.VaultId,
-            EncryptedPassword = credential.EncryptedPassword
-        };
+        return vaults.Select(x => mapper.Map<ResponseCredentialDTO>(x));
     }
 
     private async Task<Vault> GetOrThrowVaultAsync(int userId, int vaultId)
     {
         var vault = await vaultRepository.GetByIdAsync(userId, vaultId)
-            ?? throw new CredentialNotFoundException("credential not found");
+            ?? throw new VaultNotFoundException("vault not found");
         return vault;
     }
 

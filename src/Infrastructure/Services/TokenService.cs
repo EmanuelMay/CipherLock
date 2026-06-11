@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CipherLock.Infrastructure.Services;

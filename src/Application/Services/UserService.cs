@@ -2,33 +2,36 @@ using System.Security.Cryptography;
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
-using CipherLock.Domain.Interfaces;
+using CipherLock.Application.Interfaces.Repositories;
+using CipherLock.Application.Interfaces.Services;
+using AutoMapper;
 
 namespace CipherLock.Application.Services;
 
 public class UserService(
     IUserRepository repository,
-    IEmailService emailService
+    IEmailService emailService,
+    IMapper mapper
 ) : IUserService
 {
     public async Task<ResponseUserDTO> AddAsync(CreateUserDTO dto)
     {
         if (dto.Password.Length < 8)
-            throw new InvalidPasswordLengthException("The password cannot be less than 8.");
+            throw new InvalidPasswordLengthException("the password cannot be less than 8.");
         
         var user = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
 
         await repository.AddAsync(user);
         await repository.SaveChangesAsync();
 
-        return ToDTO(user);
+        return mapper.Map<ResponseUserDTO>(user);
     }
 
     public async Task<ResponseUserDTO> GetByIdAsync(int id)
     {
         var user = await GetByIdOrThrowAsync(id);
 
-        return ToDTO(user);
+        return mapper.Map<ResponseUserDTO>(user);
     }
 
     public async Task DeleteAsync(int id)
@@ -46,7 +49,7 @@ public class UserService(
         user.Update(dto.Name, dto.Email);
         await repository.SaveChangesAsync();
 
-        return ToDTO(user);
+        return mapper.Map<ResponseUserDTO>(user);
     }
     
     public async Task ForgotPasswordAsync(ForgotPasswordDTO dto)
@@ -72,9 +75,6 @@ public class UserService(
         var resetPassword = await repository.GetUserResetPasswordAsync(user.Id, dto.Code)
             ?? throw new InvalidCredentialsException("invalid credentials");
 
-        if (resetPassword.Code != dto.Code)
-            throw new InvalidCredentialsException("invalid credentials");
-
         resetPassword.Use();
         await repository.SaveChangesAsync();
 
@@ -94,16 +94,5 @@ public class UserService(
         var user = await repository.GetByIdAsync(id)
             ?? throw new UserNotFoundException("user not found");
         return user;
-    }
-
-    private static ResponseUserDTO ToDTO(User user)
-    {
-        return new ResponseUserDTO()
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email,
-            Role = user.Role.ToString()
-        };
     }
 }

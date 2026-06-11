@@ -14,14 +14,12 @@ public class ResponseVaultDTO
 public class CreateVaultDTO
 {
     [Required]
-    [StringLength(150)]
     public string Name { get; set; } = null!;
 }
 
 public class UpdateVaultDTO
 {
     [Required]
-    [StringLength(150)]
     public string Name { get; set; } = null!;
 }
 
