@@ -39,7 +39,12 @@ public class UserRepository(
         => await context.UserWelcomeConfirms.AddAsync(confirm);
     
     public async Task<UserWelcomeConfirm?> GetUserWelcomeConfirmAsync(int userId, string code)
-        => await context.UserWelcomeConfirms.FirstOrDefaultAsync(x => x.UserId == userId && x.Code == code);
+        => await context.UserWelcomeConfirms.FirstOrDefaultAsync(
+            x => x.UserId == userId &&
+            x.Code == code &&
+            x.ExpiresIn > DateTime.UtcNow &&
+            !x.IsUsed
+        );
     
     public void Delete(User user)
         => context.Users.Remove(user);

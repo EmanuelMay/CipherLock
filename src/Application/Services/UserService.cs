@@ -5,13 +5,15 @@ using CipherLock.Domain.Exceptions;
 using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Application.Interfaces.Services;
 using AutoMapper;
+using CipherLock.Infrastructure.Services;
 
 namespace CipherLock.Application.Services;
 
 public class UserService(
     IUserRepository repository,
     IEmailService emailService,
-    IMapper mapper
+    IMapper mapper,
+    IHashService hashService
 ) : IUserService
 {
     public async Task AddAsync(CreateUserDTO dto)
@@ -33,7 +35,7 @@ public class UserService(
             return;
         }
 
-        var newUser = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
+        var newUser = new User(dto.Name, dto.Email, hashService.HashPassword(dto.Password));
         await repository.AddAsync(newUser);
         await repository.SaveChangesAsync();
 
@@ -97,7 +99,7 @@ public class UserService(
 
         resetPassword.Use();
 
-        user.UpdatePassword(BCrypt.Net.BCrypt.HashPassword(dto.Password));
+        user.UpdatePassword(hashService.HashPassword(dto.Password));
         await repository.SaveChangesAsync();
     }
 

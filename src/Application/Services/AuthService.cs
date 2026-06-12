@@ -2,12 +2,14 @@ using CipherLock.Application.DTO;
 using CipherLock.Domain.Exceptions;
 using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Application.Interfaces.Services;
+using CipherLock.Infrastructure.Services;
 
 namespace CipherLock.Application.Services;
 
 public class AuthService(
     IUserRepository userRepository,
-    ITokenService tokenService
+    ITokenService tokenService,
+    IHashService hashService
 ) : IAuthService
 {
     public async Task<string> LoginAsync(LoginDTO dto)
@@ -15,7 +17,7 @@ public class AuthService(
         var user = await userRepository.GetByEmailAsync(dto.Email)
             ?? throw new InvalidCredentialsException("invalid credentials");
         
-        if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+        if (!hashService.VerifyPassword(user.PasswordHash, dto.Password))
             throw new InvalidCredentialsException("invalid credentials");
         
         if (!user.IsActive)

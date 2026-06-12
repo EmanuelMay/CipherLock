@@ -40,13 +40,7 @@ public class EmailService(
             Text = html
         };
 
-        using (var client = new SmtpClient())
-        {
-            await client.ConnectAsync("smtp.gmail.com", 465, true);
-            await client.AuthenticateAsync(address, password);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-        }
+        await SendAsync(message);
     }
 
     public async Task EmailAlreadyExistsAsync(string email, string name)
@@ -72,13 +66,7 @@ public class EmailService(
             Text = html
         };
 
-        using (var client = new SmtpClient())
-        {
-            await client.ConnectAsync("smtp.gmail.com", 465, true);
-            await client.AuthenticateAsync(address, password);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-        }
+        await SendAsync(message);
     }
 
     public async Task WelcomeConfirmAsync(string email, string name, string code)
@@ -105,6 +93,11 @@ public class EmailService(
             Text = html
         };
 
+        await SendAsync(message);
+    }
+
+    private async Task SendAsync(MimeMessage message)
+    {
         using (var client = new SmtpClient())
         {
             await client.ConnectAsync("smtp.gmail.com", 465, true);
