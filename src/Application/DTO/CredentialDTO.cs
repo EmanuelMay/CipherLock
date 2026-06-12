@@ -28,6 +28,8 @@ public class CreateCredentialDTO
 
 public class UpdateCredentialDTO
 {
-    public string? Title { get; set; } = null!;
-    public string? Username { get; set; } = null!;
+    public string? Title { get; set; }
+    public string? Username { get; set; }
+    public string? EncryptedPassword { get; set; }
+    public string? IV { get; set; }
 }

@@ -14,28 +14,30 @@ public class UserService(
     IMapper mapper
 ) : IUserService
 {
-    public async Task<ResponseUserDTO> AddAsync(CreateUserDTO dto)
+    public async Task AddAsync(CreateUserDTO dto)
     {
         if (dto.Password.Length < 8)
             throw new InvalidPasswordLengthException("the password cannot be less than 8.");
         
         if (await repository.EmailExistsAsync(dto.Email))
         {
+            var existingUser = await repository.GetByEmailAsync(dto.Email);
+
+            if (!existingUser!.IsActive)
+            {
+                await SendWelcomeCodeAsync(existingUser);
+                return;
+            }
+
             await emailService.EmailAlreadyExistsAsync(dto.Email, dto.Name);
-            return new ResponseUserDTO();
+            return;
         }
 
-        var user = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
-        await repository.AddAsync(user);
+        var newUser = new User(dto.Name, dto.Email, BCrypt.Net.BCrypt.HashPassword(dto.Password));
+        await repository.AddAsync(newUser);
         await repository.SaveChangesAsync();
 
-        var code = RandomNumberGenerator.GetInt32(100_000, 999_999).ToString();
-        var welcome = new UserWelcomeConfirm(code, user.Id);
-        await repository.AddUserWelcomeConfirmAsync(welcome);
-        await repository.SaveChangesAsync();
-        await emailService.WelcomeConfirmAsync(user.Email, user.Name, code);
-
-        return mapper.Map<ResponseUserDTO>(user);
+        await SendWelcomeCodeAsync(newUser);
     }
 
     public async Task<ResponseUserDTO> GetByIdAsync(int id)
@@ -120,5 +122,14 @@ public class UserService(
         var user = await repository.GetByIdAsync(id)
             ?? throw new UserNotFoundException("user not found");
         return user;
+    }
+
+    private async Task SendWelcomeCodeAsync(User user)
+    {
+        var code = RandomNumberGenerator.GetInt32(100_000, 999_999).ToString();
+        var welcome = new UserWelcomeConfirm(code, user.Id);
+        await repository.AddUserWelcomeConfirmAsync(welcome);
+        await repository.SaveChangesAsync();
+        await emailService.WelcomeConfirmAsync(user.Email, user.Name, code);
     }
 }

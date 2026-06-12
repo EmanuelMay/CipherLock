@@ -29,7 +29,7 @@ public class Credential
     public int VaultId { get; private set; }
     public Vault Vault { get; private set; } = null!;
 
-    public void Update(string? title, string? username)
+    public void Update(string? title, string? username, string? encryptedPassword, string? iv)
     {
         UpdateValidation(title, username);
 
@@ -37,6 +37,10 @@ public class Credential
             Title = title;
         if (!string.IsNullOrWhiteSpace(username))
             Username = username;
+        if (!string.IsNullOrWhiteSpace(encryptedPassword))
+            EncryptedPassword = encryptedPassword;
+        if (!string.IsNullOrWhiteSpace(iv))
+            IV = iv;
     }
 
     private void UpdateValidation(string? title, string? username)

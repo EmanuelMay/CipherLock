@@ -15,9 +15,9 @@ public class UserController(
     [HttpPost]
     public async Task<ActionResult<ResponseUserDTO>> AddAsync([FromBody] CreateUserDTO dto)
     {
-        var result = await userService.AddAsync(dto);
+        await userService.AddAsync(dto);
 
-        return CreatedAtRoute("GetUserById", null, result);
+        return Ok("If this email is not registered, you will receive a confirmation email shortly.");
     }
 
     [Authorize]

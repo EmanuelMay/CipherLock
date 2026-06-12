@@ -4,7 +4,7 @@ namespace CipherLock.Application.Interfaces.Services;
 
 public interface IUserService
 {
-    public Task<ResponseUserDTO> AddAsync(CreateUserDTO dto);
+    public Task AddAsync(CreateUserDTO dto);
 
     public Task<ResponseUserDTO> GetByIdAsync(int id);
 
