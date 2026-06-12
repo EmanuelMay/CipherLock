@@ -8,8 +8,7 @@ public class Credential
         string title,
         string username,
         int vaultId,
-        string encryptedPassword,
-        string iv
+        string encryptedPassword
     )
     {
         Validation(title, username);
@@ -18,18 +17,16 @@ public class Credential
         Username = username;
         VaultId = vaultId;
         EncryptedPassword = encryptedPassword;
-        IV = iv;
     }
 
     public int Id { get; private set; }
     public string Title { get; private set; } = null!;
     public string Username { get; private set;} = null!;
     public string EncryptedPassword { get; private set; } = null!;
-    public string IV { get; private set; } = null!;
     public int VaultId { get; private set; }
     public Vault Vault { get; private set; } = null!;
 
-    public void Update(string? title, string? username, string? encryptedPassword, string? iv)
+    public void Update(string? title, string? username, string? encryptedPassword)
     {
         UpdateValidation(title, username);
 
@@ -39,8 +36,6 @@ public class Credential
             Username = username;
         if (!string.IsNullOrWhiteSpace(encryptedPassword))
             EncryptedPassword = encryptedPassword;
-        if (!string.IsNullOrWhiteSpace(iv))
-            IV = iv;
     }
 
     private void UpdateValidation(string? title, string? username)

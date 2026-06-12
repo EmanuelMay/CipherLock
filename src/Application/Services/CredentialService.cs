@@ -21,14 +21,12 @@ public class CredentialService(
         vault.Modify();
 
         var encrypted = encryptService.Encrypt(dto.EncryptedPassword);
-        var parts = encrypted.Split(":");
 
         var credential = new Credential(
             dto.Title,
             dto.Username,
             dto.VaultId,
-            parts[1],
-            parts[0]
+            encrypted
         );
 
         await credentialRepository.AddAsync(credential);
@@ -46,18 +44,7 @@ public class CredentialService(
     {
         var credential = await GetOrThrowCredentialAsync(userId, credentialId, vaultId);
 
-        string? encryptedPassword = null;
-        string? iv = null;
-
-        if (!string.IsNullOrWhiteSpace(dto.EncryptedPassword))
-        {
-            var encrypted = encryptService.Encrypt(dto.EncryptedPassword);
-            var parts = encrypted.Split(":");
-            iv = parts[0];
-            encryptedPassword = parts[1];
-        }
-
-        credential.Update(dto.Title, dto.Username, encryptedPassword, iv);
+        credential.Update(dto.Title, dto.Username, dto.EncryptedPassword);
         await credentialRepository.SaveChangesAsync();
 
         return mapper.Map<ResponseCredentialDTO>(credential);
@@ -70,7 +57,7 @@ public class CredentialService(
         return vaults.Select(x =>
         {
             var dto = mapper.Map<ResponseCredentialDTO>(x);
-            dto.EncryptedPassword = encryptService.Decrypt(x.EncryptedPassword, x.IV);
+            dto.EncryptedPassword = encryptService.Decrypt(x.EncryptedPassword);
             return dto;
         });
     }

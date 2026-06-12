@@ -96,7 +96,6 @@ public class UserService(
             ?? throw new InvalidCredentialsException("invalid credentials");
 
         resetPassword.Use();
-        await repository.SaveChangesAsync();
 
         user.UpdatePassword(BCrypt.Net.BCrypt.HashPassword(dto.Password));
         await repository.SaveChangesAsync();

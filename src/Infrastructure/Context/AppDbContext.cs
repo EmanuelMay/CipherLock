@@ -50,10 +50,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .Property(x => x.EncryptedPassword)
             .HasColumnType("text");
         
-        mb.Entity<Credential>()
-            .Property(x => x.IV)
-            .HasColumnType("varchar(150)");
-        
         mb.Entity<UserResetPassword>()
             .ToTable("user_reset_passwords");
         

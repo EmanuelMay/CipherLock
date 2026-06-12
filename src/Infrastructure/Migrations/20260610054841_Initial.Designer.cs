@@ -32,9 +32,10 @@ namespace CipherLock.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(150)");
 
-                    b.Property<string>("IV")
+                    b.Property<string>("Nonce")
                         .IsRequired()
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("IV");
 
                     b.Property<string>("Title")
                         .IsRequired()

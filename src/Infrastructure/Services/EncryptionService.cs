@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using CipherLock.Application.Services;
 
 namespace CipherLock.Infrastructure.Services;
 
@@ -17,37 +18,48 @@ public class EncryptionService : IEncryptService
 
     public string Encrypt(string plainText)
     {
-        using var aes = Aes.Create();
-        aes.Mode = CipherMode.CBC;
-        aes.Key = key;
-        aes.GenerateIV();
+        byte[] nonce = RandomNumberGenerator.GetBytes(12);
 
-        var encryptor = aes.CreateEncryptor();
+        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plainText);
+        byte[] cipherBytes = new byte[plaintextBytes.Length];
+        byte[] tag = new byte[16];
 
-        using var ms = new MemoryStream();
-        using var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
-        using var sw = new StreamWriter(cs);
-        sw.Write(plainText);
-        sw.Close();
+        using var aes = new AesGcm(key, 16);
 
-        var cipherBytes = ms.ToArray();
+        aes.Encrypt(
+            nonce,
+            plaintextBytes,
+            cipherBytes,
+            tag
+        );
 
-        return Convert.ToBase64String(aes.IV) + ":" + Convert.ToBase64String(cipherBytes);
+        return $"{Convert.ToBase64String(nonce)}:" +
+            $"{Convert.ToBase64String(tag)}:" +
+            $"{Convert.ToBase64String(cipherBytes)}";
     }
 
-    public string Decrypt(string cipher, string iv)
+    public string Decrypt(string cipherText)
     {
-        using var aes = Aes.Create();
-        aes.Mode = CipherMode.CBC;
-        aes.Key = key;
-        aes.IV = Convert.FromBase64String(iv);
+        var parts = cipherText.Split(':');
 
-        var decryptor = aes.CreateDecryptor();
+        if (parts.Length != 3)
+            throw new ArgumentException("encrypted text is invalid");
+        
+        byte[] nonce = Convert.FromBase64String(parts[0]);
+        byte[] tag = Convert.FromBase64String(parts[1]);
+        byte[] cipherBytes = Convert.FromBase64String(parts[2]);
 
-        using var ms = new MemoryStream(Convert.FromBase64String(cipher));
-        using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
-        using var sr = new StreamReader(cs);
+        byte[] plainttextBytes = new byte[cipherBytes.Length];
 
-        return sr.ReadToEnd();
+        using var aes = new AesGcm(key, 16);
+
+        aes.Decrypt(
+            nonce,
+            cipherBytes,
+            tag,
+            plainttextBytes
+        );
+
+        return Encoding.UTF8.GetString(plainttextBytes);
     }
 }
