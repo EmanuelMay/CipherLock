@@ -21,7 +21,7 @@ public class CreateUserDTO
     public string Email { get; set; } = null!;
 
     [Required]
-    [StringLength(8)]
+    [MinLength(8)]
     public string Password { get; set; } = null!;
 }
 
@@ -32,7 +32,7 @@ public class LoginDTO
     public string Email { get; set; } = null!;
 
     [Required]
-    [StringLength(8)]
+    [MinLength(8)]
     public string Password { get; set; } = null!;
 }
 
@@ -59,7 +59,7 @@ public class ResetPasswordDTO
     public string Code { get; set; } = null!;
 
     [Required]
-    [StringLength(8)]
+    [MinLength(8)]
     public string Password { get; set; } = null!;
 }
 

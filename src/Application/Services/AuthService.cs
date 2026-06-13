@@ -17,7 +17,7 @@ public class AuthService(
         var user = await userRepository.GetByEmailAsync(dto.Email)
             ?? throw new InvalidCredentialsException("invalid credentials");
         
-        if (!hashService.VerifyPassword(user.PasswordHash, dto.Password))
+        if (!hashService.VerifyPassword(dto.Password, user.PasswordHash))
             throw new InvalidCredentialsException("invalid credentials");
         
         if (!user.IsActive)

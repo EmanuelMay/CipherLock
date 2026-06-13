@@ -16,7 +16,7 @@ public class EmailService(
     private readonly string password = configuration["Email:Password"]
             ?? throw new EmailNotConfiguredException("password is not configured");
     
-    private readonly string smtpHost = configuration["Email:SmptHost"]
+    private readonly string smtpHost = configuration["Email:SmtpHost"]
             ?? throw new EmailNotConfiguredException("smtp host is not configured");
     
     private readonly int smtpPort = int.Parse(configuration["Email:SmtpPort"]

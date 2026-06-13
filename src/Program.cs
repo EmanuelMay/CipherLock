@@ -27,11 +27,23 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IVaultService, VaultService>();
 builder.Services.AddScoped<ICredentialService, CredentialService>();
 builder.Services.AddScoped<IEncryptService, EncryptionService>();
+builder.Services.AddScoped<IHashService, HashService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVaultRepository, VaultRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+string? mySqlConnection = builder.Configuration["ConnectionStrings:DefaultConnection"]
+    ?? throw new ConnectionStringException("connection string is not configured");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        mySqlConnection,
+        new MariaDbServerVersion(new Version(11, 4))
+    )
+);
+
+builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AppDbContext>());
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -79,15 +91,6 @@ builder.Services
             ClockSkew        = TimeSpan.Zero,
         };
     });
-
-string? mySqlConnection = builder.Configuration["ConnectionStrings:DefaultConnection"]
-    ?? throw new ConnectionStringException("connection string is not configured");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(
-        mySqlConnection,
-        new MariaDbServerVersion(new Version(11, 4))
-    )
-);
 
 var app = builder.Build();
 

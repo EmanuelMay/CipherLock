@@ -13,7 +13,15 @@ public class EncryptionService : IEncryptService
         var rawKey = configuration["AES:Key"]
             ?? throw new Exception();
         
-        key = SHA256.HashData(Encoding.UTF8.GetBytes(rawKey));
+        var keyMaterial = SHA256.HashData(Encoding.UTF8.GetBytes(rawKey));
+
+        key = HKDF.DeriveKey(
+            hashAlgorithmName: HashAlgorithmName.SHA256,
+            ikm: keyMaterial,          // input key material
+            outputLength: 32,
+            salt: null,                // opcional: pode passar um salt fixo por contexto
+            info: Encoding.UTF8.GetBytes("cipherlock-credential-encryption")
+        );
     }
 
     public string Encrypt(string plainText)
