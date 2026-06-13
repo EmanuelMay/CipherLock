@@ -4,8 +4,6 @@ namespace CipherLock.Application.Interfaces.Repositories;
 
 public interface ICredentialRepository
 {
-    public Task SaveChangesAsync();
-
     public Task AddAsync(Credential credential);
 
     public Task<Credential?> GetByIdAsync(int userId, int vaultId, int credentialId);

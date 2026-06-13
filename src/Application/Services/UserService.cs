@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
+using CipherLock.Application.Interfaces;
 using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Application.Interfaces.Services;
 using AutoMapper;
@@ -13,18 +14,16 @@ public class UserService(
     IUserRepository repository,
     IEmailService emailService,
     IMapper mapper,
-    IHashService hashService
+    IHashService hashService,
+    IUnitOfWork unitOfWork
 ) : IUserService
 {
     public async Task AddAsync(CreateUserDTO dto)
     {
-        if (dto.Password.Length < 8)
-            throw new InvalidPasswordLengthException("the password cannot be less than 8.");
-        
-        if (await repository.EmailExistsAsync(dto.Email))
-        {
-            var existingUser = await repository.GetByEmailAsync(dto.Email);
+        var existingUser = await repository.GetByEmailAsync(dto.Email);
 
+        if (existingUser is not null)
+        {
             if (!existingUser!.IsActive)
             {
                 await SendWelcomeCodeAsync(existingUser);
@@ -37,7 +36,7 @@ public class UserService(
 
         var newUser = new User(dto.Name, dto.Email, hashService.HashPassword(dto.Password));
         await repository.AddAsync(newUser);
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         await SendWelcomeCodeAsync(newUser);
     }
@@ -53,8 +52,8 @@ public class UserService(
     {
         var user = await GetByIdOrThrowAsync(id);
 
-        repository.Delete(user);
-        await repository.SaveChangesAsync();
+        repository.Remove(user);
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task<ResponseUserDTO> UpdateAsync(int id, UpdateUserDTO dto)
@@ -62,7 +61,7 @@ public class UserService(
         var user = await GetByIdOrThrowAsync(id);
 
         user.Update(dto.Name, dto.Email);
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         return mapper.Map<ResponseUserDTO>(user);
     }
@@ -79,16 +78,13 @@ public class UserService(
         var resetPassword = new UserResetPassword(code, user.Id);
 
         await repository.AddUserResetPasswordAsync(resetPassword);
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         await emailService.ResetPasswordAsync(user.Email, user.Name, code);
     }
 
     public async Task ResetPasswordAsync(ResetPasswordDTO dto)
     {
-        if (dto.Password.Length < 8)
-            throw new InvalidPasswordLengthException("The password cannot be less than 8.");
-
         var user = await repository.GetByEmailAsync(dto.Email);
 
         if (user is null)
@@ -100,7 +96,7 @@ public class UserService(
         resetPassword.Use();
 
         user.UpdatePassword(hashService.HashPassword(dto.Password));
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task WelcomeConfirmAsync(WelcomeConfirmDTO dto)
@@ -115,7 +111,7 @@ public class UserService(
 
         confirm.Use();
         user.Activate();
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
     }
 
     private async Task<User> GetByIdOrThrowAsync(int id)
@@ -130,7 +126,7 @@ public class UserService(
         var code = RandomNumberGenerator.GetInt32(100_000, 999_999).ToString();
         var welcome = new UserWelcomeConfirm(code, user.Id);
         await repository.AddUserWelcomeConfirmAsync(welcome);
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
         await emailService.WelcomeConfirmAsync(user.Email, user.Name, code);
     }
 }

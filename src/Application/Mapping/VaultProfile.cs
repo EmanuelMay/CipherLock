@@ -10,6 +10,5 @@ public class VaultProfile : Profile
     {
         CreateMap<Vault, ResponseVaultDTO>();
         CreateMap<Vault, ResponseVaultDetailDTO>();
-        CreateMap<Credential, ResponseCredentialDTO>();
     }
 }

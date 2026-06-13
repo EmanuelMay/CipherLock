@@ -9,9 +9,6 @@ public class UserRepository(
     AppDbContext context
 ) : IUserRepository
 {
-    public async Task SaveChangesAsync()
-        => await context.SaveChangesAsync();
-    
     public async Task AddAsync(User user)
         => await context.Users.AddAsync(user);
     
@@ -46,6 +43,6 @@ public class UserRepository(
             !x.IsUsed
         );
     
-    public void Delete(User user)
+    public void Remove(User user)
         => context.Users.Remove(user);
 }

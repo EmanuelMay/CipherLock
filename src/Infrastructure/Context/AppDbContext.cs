@@ -1,9 +1,10 @@
+using CipherLock.Application.Interfaces;
 using CipherLock.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CipherLock.Infrastructure.Context;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options), IUnitOfWork
 {
     public DbSet<User> Users { get; private set; }
     public DbSet<Vault> Vaults { get; private set; }
@@ -56,4 +57,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         mb.Entity<UserWelcomeConfirm>()
             .ToTable("user_welcome_confirm");
     }
+
+    Task IUnitOfWork.SaveChangesAsync() => base.SaveChangesAsync();
 }

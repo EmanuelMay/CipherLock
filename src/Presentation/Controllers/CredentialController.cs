@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CipherLock.Application.DTO;
 using CipherLock.Application.Interfaces.Services;
+using CipherLock.Presentation.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,16 +17,16 @@ public class CredentialController(
     [HttpPost]
     public async Task<ActionResult<ResponseCredentialDTO>> AddAsync([FromBody] CreateCredentialDTO dto)
     {
-        var userId = User.FindFirst(ClaimTypes.Name)?.Value;
-        return Ok(await credentialService.AddAsync(int.Parse(userId!), dto));
+        var userId = User.GetUserId();
+        return Ok(await credentialService.AddAsync(userId, dto));
     }
 
     [Authorize]
-    [HttpGet("{vaultId:int}")]
+    [HttpGet("{vaultId:int}/credentials")]
     public async Task<ActionResult<IEnumerable<ResponseCredentialDTO>>> GetAllByVaultAsync(int vaultId)
     {
-        var userId = User.FindFirstValue(ClaimTypes.Name);
-        var result = await credentialService.GetAllByVaultAsync(vaultId, int.Parse(userId!));
+        var userId = User.GetUserId();
+        var result = await credentialService.GetAllByVaultAsync(vaultId, userId);
 
         return Ok(result);
     }
@@ -38,8 +39,8 @@ public class CredentialController(
         [FromBody] UpdateCredentialDTO dto
     )
     {
-        var userId = User.FindFirstValue(ClaimTypes.Name);
-        var result = await credentialService.UpdateAsync(int.Parse(userId!), vaultId, credentialId, dto);
+        var userId = User.GetUserId();
+        var result = await credentialService.UpdateAsync(userId, vaultId, credentialId, dto);
         return Ok(result);
     }
 }

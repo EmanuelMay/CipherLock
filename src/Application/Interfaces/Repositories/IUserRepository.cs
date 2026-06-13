@@ -4,8 +4,6 @@ namespace CipherLock.Application.Interfaces.Repositories;
 
 public interface IUserRepository
 {
-    public Task SaveChangesAsync();
-    
     public Task AddAsync(User user);
     
     public Task<User?> GetByIdAsync(int id);
@@ -22,5 +20,5 @@ public interface IUserRepository
 
     public Task<UserWelcomeConfirm?> GetUserWelcomeConfirmAsync(int userId, string code);
 
-    public void Delete(User user);
+    public void Remove(User user);
 }

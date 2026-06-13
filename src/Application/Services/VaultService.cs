@@ -1,6 +1,7 @@
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
+using CipherLock.Application.Interfaces;
 using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Application.Interfaces.Services;
 using AutoMapper;
@@ -9,7 +10,8 @@ namespace CipherLock.Application.Services;
 
 public class VaultService(
     IVaultRepository repository,
-    IMapper mapper
+    IMapper mapper,
+    IUnitOfWork unitOfWork
 ) : IVaultService
 {
     public async Task<ResponseVaultDTO> AddAsync(int userId, CreateVaultDTO dto)
@@ -17,7 +19,7 @@ public class VaultService(
         var vault = new Vault(dto.Name, userId);
 
         await repository.AddAsync(vault);
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         return mapper.Map<ResponseVaultDTO>(vault);
     }
@@ -37,7 +39,7 @@ public class VaultService(
         var vault = await GetByIdOrThrowAsync(userId, vaultId);
 
         vault.Update(dto.Name);
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         return mapper.Map<ResponseVaultDTO>(vault);
     }
@@ -61,7 +63,7 @@ public class VaultService(
         var vault = await GetByIdOrThrowAsync(userId, vaultId);
 
         repository.Remove(vault);
-        await repository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
     }
 
     private async Task<Vault> GetByIdOrThrowAsync(int userId, int vaultId)

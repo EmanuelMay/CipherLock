@@ -9,9 +9,6 @@ public class VaultRepository(
     AppDbContext context
 ) : IVaultRepository
 {
-    public async Task SaveChangesAsync()
-        => await context.SaveChangesAsync();
-    
     public async Task AddAsync(Vault vault)
         => await context.Vaults.AddAsync(vault);
     

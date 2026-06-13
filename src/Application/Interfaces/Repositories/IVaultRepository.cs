@@ -4,8 +4,6 @@ namespace CipherLock.Application.Interfaces.Repositories;
 
 public interface IVaultRepository
 {
-    public Task SaveChangesAsync();
-    
     public Task AddAsync(Vault vault);
 
     public Task<IEnumerable<Vault>> SearchByNameAsync(int id, string name);

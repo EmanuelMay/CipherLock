@@ -15,6 +15,12 @@ public class EmailService(
 
     private readonly string password = configuration["Email:Password"]
             ?? throw new EmailNotConfiguredException("password is not configured");
+    
+    private readonly string smtpHost = configuration["Email:SmptHost"]
+            ?? throw new EmailNotConfiguredException("smtp host is not configured");
+    
+    private readonly int smtpPort = int.Parse(configuration["Email:SmtpPort"]
+            ?? throw new EmailNotConfiguredException("smtp port is not configured"));
 
     public async Task ResetPasswordAsync(string email, string name, string code)
     {
@@ -100,7 +106,7 @@ public class EmailService(
     {
         using (var client = new SmtpClient())
         {
-            await client.ConnectAsync("smtp.gmail.com", 465, true);
+            await client.ConnectAsync(smtpHost, smtpPort, true);
             await client.AuthenticateAsync(address, password);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);

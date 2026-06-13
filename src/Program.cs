@@ -1,6 +1,7 @@
 using System.Text;
 using CipherLock.Application.Services;
 using CipherLock.Domain.Exceptions;
+using CipherLock.Application.Interfaces;
 using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Application.Interfaces.Services;
 using CipherLock.Infrastructure.Context;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IEncryptService, EncryptionService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVaultRepository, VaultRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -78,7 +80,8 @@ builder.Services
         };
     });
 
-string? mySqlConnection = builder.Configuration["ConnectionStrings:DefaultConnection"];
+string? mySqlConnection = builder.Configuration["ConnectionStrings:DefaultConnection"]
+    ?? throw new ConnectionStringException("connection string is not configured");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         mySqlConnection,

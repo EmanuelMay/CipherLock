@@ -21,16 +21,13 @@ public class Vault
     public User User { get; private set; } = null!;
     public ICollection<Credential> Credentials { get; private set; } = [];
 
+    public void RefreshModifiedAt() => ModifiedAt = DateTime.UtcNow;
+
     public void Update(string name)
     {
         Validation(name);
 
         Name = name;
-        ModifiedAt = DateTime.UtcNow;
-    }
-
-    public void Modify()
-    {
         ModifiedAt = DateTime.UtcNow;
     }
 

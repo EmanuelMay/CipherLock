@@ -1,6 +1,7 @@
 using CipherLock.Application.DTO;
 using CipherLock.Domain.Entities;
 using CipherLock.Domain.Exceptions;
+using CipherLock.Application.Interfaces;
 using CipherLock.Application.Interfaces.Repositories;
 using CipherLock.Application.Interfaces.Services;
 using AutoMapper;
@@ -12,13 +13,14 @@ public class CredentialService(
     ICredentialRepository credentialRepository,
     IVaultRepository vaultRepository,
     IMapper mapper,
-    IEncryptService encryptService
+    IEncryptService encryptService,
+    IUnitOfWork unitOfWork
 ) : ICredentialService
 {
     public async Task<ResponseCredentialDTO> AddAsync(int userId, CreateCredentialDTO dto)
     {
         var vault = await GetOrThrowVaultAsync(userId, dto.VaultId);
-        vault.Modify();
+        vault.RefreshModifiedAt();
 
         var encrypted = encryptService.Encrypt(dto.EncryptedPassword);
 
@@ -30,7 +32,7 @@ public class CredentialService(
         );
 
         await credentialRepository.AddAsync(credential);
-        await credentialRepository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         return mapper.Map<ResponseCredentialDTO>(credential);
     }
@@ -45,7 +47,7 @@ public class CredentialService(
         var credential = await GetOrThrowCredentialAsync(userId, credentialId, vaultId);
 
         credential.Update(dto.Title, dto.Username, dto.EncryptedPassword);
-        await credentialRepository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         return mapper.Map<ResponseCredentialDTO>(credential);
     }

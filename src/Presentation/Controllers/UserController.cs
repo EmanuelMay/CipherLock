@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CipherLock.Application.DTO;
 using CipherLock.Application.Interfaces.Services;
+using CipherLock.Presentation.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,17 +25,17 @@ public class UserController(
     [HttpGet("me", Name = "GetUserById")]
     public async Task<ActionResult<ResponseUserDTO>> GetByIdAsync()
     {
-        var id = User.FindFirstValue(ClaimTypes.Name);
+        var userId = User.GetUserId();
 
-        return Ok(await userService.GetByIdAsync(int.Parse(id!)));
+        return Ok(await userService.GetByIdAsync(userId));
     }
     
     [Authorize]
     [HttpDelete("me")]
     public async Task<ActionResult> DeleteAsync()
     {
-        var id = User.FindFirstValue(ClaimTypes.Name);
-        await userService.DeleteAsync(int.Parse(id!));
+        var userId = User.GetUserId();
+        await userService.DeleteAsync(userId);
     
         return NoContent();
     }
@@ -43,9 +44,9 @@ public class UserController(
     [HttpPatch("me")]
     public async Task<ActionResult<ResponseUserDTO>> UpdateAsync([FromBody] UpdateUserDTO dto)
     {
-        var id = User.FindFirstValue(ClaimTypes.Name);
+        var userId = User.GetUserId();
 
-        return Ok(await userService.UpdateAsync(int.Parse(id!), dto));
+        return Ok(await userService.UpdateAsync(userId, dto));
     }
 
     [HttpPost("forgot-password")]
